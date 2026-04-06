@@ -939,7 +939,7 @@
   <button data-step="3" data-label="Not Everything Needs a Lock"></button>
   <button data-step="4" data-label="The Two Types"></button>
   <button data-step="5" data-label="Gemini Changes the Rules"></button>
-  <button data-step="6" data-label="The Silent Upgrade"></button>
+  <button data-step="6" data-label="How Keys Gained Access"></button>
   <button data-step="7" data-label="What Happened Next"></button>
   <button data-step="8" data-label="The Lesson"></button>
 </nav>
@@ -1279,14 +1279,13 @@
 </section>
 
 
-<!-- ==================== STEP 6: THE SILENT UPGRADE ==================== -->
+<!-- ==================== STEP 6: THE DEFAULT THAT CHANGED ==================== -->
 <section class="step-section" id="step-6">
   <div class="step-content">
-    <div class="chapter-label"><span class="num">6</span> The Real Danger</div>
-    <h2>The Silent Upgrade Nobody Asked For</h2>
+    <div class="chapter-label"><span class="num">6</span> What Happened Next</div>
+    <h2>How Existing Keys Gained New Access</h2>
 
-    <p class="narrative">Here's what made this truly dangerous. Remember FreshBite's API key from 2021 &mdash; the one sitting in their public website code, visible to anyone?</p>
-    <p class="narrative">When someone on FreshBite's team turned on Gemini for their Google account, something happened <strong>silently, in the background</strong>:</p>
+    <p class="narrative">When you enable a new API on a Google Cloud project, all existing keys in that project automatically gain access to it. That's the platform default &mdash; and it worked fine when every API served public data. But with Gemini, it meant this:</p>
 
     <div class="before-after">
       <div class="ba-card">
@@ -1298,13 +1297,13 @@
           <span class="chip safe">Distance</span>
           <span class="chip safe">YouTube search</span>
         </div>
-        <div style="font-size:0.8rem;color:var(--text-dim);margin-top:0.75rem">All public data. Key is publicly visible. Everything is fine.</div>
+        <div style="font-size:0.8rem;color:var(--text-dim);margin-top:0.75rem">All public data. Key is publicly visible.</div>
       </div>
       <div class="ba-divider">
-        &#9660; Someone on the team enables Gemini &mdash; <strong>no warning, no confirmation, no email</strong> &#9660;
+        &#9660; Someone on the team enables the Gemini API on this project &#9660;
       </div>
       <div class="ba-card">
-        <div class="ba-label">After: Same key can now ALSO access...</div>
+        <div class="ba-label">After: Same key can now also access...</div>
         <div class="chip-list">
           <span class="chip safe">Maps</span>
           <span class="chip safe">Directions</span>
@@ -1313,38 +1312,11 @@
           <span class="chip safe">YouTube search</span>
           <span class="chip danger">Gemini AI</span>
         </div>
-        <div style="font-size:0.8rem;color:var(--danger);margin-top:0.75rem;font-weight:600">That public name tag now unlocks an expensive AI. And it's still sitting in the website code for anyone to copy.</div>
+        <div style="font-size:0.8rem;color:var(--danger);margin-top:0.75rem;font-weight:600">That public name tag can now access a paid AI service &mdash; and it's still visible in the website code.</div>
       </div>
     </div>
 
-    <p class="narrative">This almost certainly wasn't intentional. When you enable a new API on a Google Cloud project, <em>all</em> existing keys gain access to it by default &mdash; that's how the platform has always worked. It made sense when every API served public data. Nobody anticipated that one day an API would come along where that default would be dangerous.</p>
-
-    <p class="narrative">Think of it this way: imagine you have a library card that lets you browse public books. One day, the library adds a new service &mdash; paid tutoring &mdash; and your existing card automatically works for that too. No notification. No email. No confirmation. And your library card number is printed on your public blog.</p>
-
-    <p class="narrative">Anyone who visits FreshBite's website can see the API key in the code. Before Gemini, that was harmless &mdash; like seeing a library card number. After the silent upgrade, that same visible string lets a stranger:</p>
-
-    <div class="visual-card" style="border-color:rgba(239,68,68,0.3)">
-      <div style="display:flex;flex-direction:column;gap:0.75rem;">
-        <div style="display:flex;align-items:center;gap:0.75rem">
-          <span style="color:var(--danger);font-size:1.2rem">&#9888;</span>
-          <span style="color:var(--text-dim)"><strong style="color:var(--text-bright)">Run up your AI bill</strong> &mdash; every Gemini request costs money, and it's charged to FreshBite</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:0.75rem">
-          <span style="color:var(--danger);font-size:1.2rem">&#9888;</span>
-          <span style="color:var(--text-dim)"><strong style="color:var(--text-bright)">Access uploaded files</strong> &mdash; any documents FreshBite uploaded to Gemini for analysis</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:0.75rem">
-          <span style="color:var(--danger);font-size:1.2rem">&#9888;</span>
-          <span style="color:var(--text-dim)"><strong style="color:var(--text-bright)">Shut down services</strong> &mdash; exhaust FreshBite's quota so their real features stop working</span>
-        </div>
-      </div>
-    </div>
-
-    <p class="narrative">And the old protection &mdash; restricting who can use the key by checking which website the request came from? <strong>It doesn't work with Gemini.</strong> Those checks only work for browser-based requests. Gemini calls can be made from anywhere.</p>
-
-    <div class="callout red">
-      <strong style="color:var(--danger)">The name tag became a credit card.</strong> It was still pinned to the front desk for everyone to see. And the front-desk lock didn't work anymore.
-    </div>
+    <p class="narrative">With Gemini access, anyone who copies that key from the website code could use it to run AI requests billed to FreshBite, access files uploaded to Gemini, or exhaust FreshBite's usage quota. And the existing referrer restrictions &mdash; which work for browser-based map requests &mdash; don't apply to Gemini API calls.</p>
   </div>
 </section>
 
