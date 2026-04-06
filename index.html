@@ -936,12 +936,11 @@
   <button data-step="0" data-label="Start" class="active"></button>
   <button data-step="1" data-label="Logging In"></button>
   <button data-step="2" data-label="Apps Log In Too"></button>
-  <button data-step="3" data-label="Not Everything Needs a Lock"></button>
-  <button data-step="4" data-label="The Two Types"></button>
-  <button data-step="5" data-label="Gemini Changes the Rules"></button>
-  <button data-step="6" data-label="How Keys Gained Access"></button>
-  <button data-step="7" data-label="What Happened Next"></button>
-  <button data-step="8" data-label="The Lesson"></button>
+  <button data-step="3" data-label="Public Data"></button>
+  <button data-step="4" data-label="Gemini"></button>
+  <button data-step="5" data-label="How Keys Gained Access"></button>
+  <button data-step="6" data-label="The Fallout"></button>
+  <button data-step="7" data-label="Takeaway"></button>
 </nav>
 
 
@@ -1020,10 +1019,12 @@
       </div>
     </div>
 
-    <p class="narrative">Together, the <strong>Client ID + Client Secret</strong> work just like your email + password. The ID says "I'm FreshBite's meal delivery app." The secret proves it. If someone steals the secret, they can <em>pretend</em> to be FreshBite &mdash; just like someone who steals your Gmail password can pretend to be you.</p>
+    <p class="narrative">Together, the <strong>Client ID + Client Secret</strong> work just like your email + password. This is how apps access <strong>private</strong> things &mdash; a user's emails, their Drive files, their payment info.</p>
+    <p class="narrative">But not every app needs access to private things. And for those that don't, Google offered a simpler option: <strong>just the identifier, no secret.</strong> They called it an <em>API key</em>.</p>
 
-    <div class="callout blue">
-      <strong style="color:var(--accent)">The key idea:</strong> This is how apps access <strong>private</strong> things &mdash; a user's personal emails, their private playlists, their payment info. Private things need real credentials, just like your inbox needs your password.
+    <div class="quote-block">
+      "API keys for Firebase services only <em>identify</em> your project. You do not need to treat API keys as secrets, and you can safely embed them in client code."
+      <cite>&mdash; Google's Firebase Documentation</cite>
     </div>
   </div>
 </section>
@@ -1139,17 +1140,7 @@
     </div>
 
     <div class="callout green" style="margin-top:0.5rem">
-      <strong style="color:var(--success)">Everything you just interacted with is public data.</strong> Map tiles, restaurant locations, street distances, driving directions &mdash; anyone can see all of it on Google Maps for free from their phone. So why does FreshBite need a key at all?
-    </div>
-
-    <div class="visual-card" style="margin-top:0;border-radius:0 0 12px 12px;border-top:none;padding:1.5rem 1.75rem;">
-      <p class="narrative" style="margin-bottom:1rem;max-width:100%">When <strong>you</strong> open Google Maps on your phone, Google offers it free because they earn revenue through ads shown alongside the map.</p>
-      <p class="narrative" style="margin-bottom:1rem;max-width:100%">But when <strong>FreshBite</strong> embeds that same map into their own website, there are no Google ads &mdash; FreshBite's customers see FreshBite's brand. So Google charges FreshBite a small fee per lookup instead:</p>
-      <div class="quote-block" style="margin:0.75rem 0;border-color:var(--success)">
-        "You can use my maps &mdash; but since I'm not making ad revenue from your users, I'm going to charge <em>you</em> per lookup. Give me a key so I know who to bill."
-        <cite>&mdash; The business logic behind API keys</cite>
-      </div>
-      <p class="narrative" style="margin-bottom:0;max-width:100%">That's all the API key does. It's a <strong>billing label</strong>. Not a password. Not a secret. Just: <em>"charge this to FreshBite."</em> The data itself is still public &mdash; the key just tracks who's using it and how much.</p>
+      <strong style="color:var(--success)">Everything you just interacted with is public data.</strong> Map tiles, restaurant locations, street distances, driving directions &mdash; anyone can see all of it on Google Maps for free from their phone. When you use Google Maps directly, Google earns ad revenue. When FreshBite embeds that same map, there are no Google ads &mdash; so Google charges FreshBite a small fee per lookup instead. The API key is just a <strong>billing label</strong>: <em>"charge this to FreshBite."</em>
     </div>
 
     <p class="narrative" style="margin-top:1.5rem">FreshBite isn't unusual. <strong>Millions of websites</strong> use the same approach &mdash; public API key, right there in the code. Here are a few more everyday examples:</p>
@@ -1182,90 +1173,14 @@
 </section>
 
 
-<!-- ==================== STEP 4: THE TWO TYPES ==================== -->
+<!-- ==================== STEP 4: GEMINI ==================== -->
 <section class="step-section" id="step-4">
   <div class="step-content">
-    <div class="chapter-label"><span class="num">4</span> The Full Picture</div>
-    <h2>Two Types of Access. Clear Rules.</h2>
-
-    <p class="narrative">For over a decade, Google maintained a clean, simple system that everyone understood:</p>
-
-    <div class="analogy-grid" style="margin:2rem 0">
-      <div class="analogy-box green" style="border-top-width:4px">
-        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem">
-          <span style="font-size:1.3rem">&#128100;</span>
-          <h3 style="margin:0">Just the Name Tag</h3>
-        </div>
-        <div style="font-size:0.95rem;font-weight:700;color:var(--success);margin-bottom:0.75rem;">API Key (Identifier Only)</div>
-        <p style="margin-bottom:0.75rem">"I'm FreshBite's app."</p>
-        <div style="font-size:0.85rem;color:var(--text-dim);line-height:1.7">
-          &#10003; Show me the map<br>
-          &#10003; Search public videos<br>
-          &#10003; Give me directions<br>
-          &#10003; Translate this text<br><br>
-          <strong style="color:var(--text)">No password needed.</strong><br>
-          This is all public information anyway.
-        </div>
-      </div>
-
-      <div class="analogy-box red" style="border-top-width:4px">
-        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem">
-          <span style="font-size:1.3rem">&#128274;</span>
-          <h3 style="margin:0">Full Login</h3>
-        </div>
-        <div style="font-size:0.95rem;font-weight:700;color:var(--danger);margin-bottom:0.75rem;">Client ID + Secret (Username + Password)</div>
-        <p style="margin-bottom:0.75rem">"I'm FreshBite's app &mdash; and here's my proof."</p>
-        <div style="font-size:0.85rem;color:var(--text-dim);line-height:1.7">
-          &#128274; Read a user's private emails<br>
-          &#128274; Access their Google Drive files<br>
-          &#128274; See their private playlists<br>
-          &#128274; Manage their calendar<br><br>
-          <strong style="color:var(--text)">Password required.</strong><br>
-          This is someone's private life.
-        </div>
-      </div>
-    </div>
-
-    <p class="narrative">Simple, right? Public stuff gets a name tag. Private stuff gets a full login. <strong>Everyone followed these rules for years.</strong> Millions of websites embedded their API keys in public code, exactly as Google instructed.</p>
-
-    <div class="quote-block">
-      "API keys for Firebase services only <em>identify</em> your project. You do not need to treat API keys as secrets, and you can safely embed them in client code."
-      <cite>&mdash; Google's Firebase Documentation</cite>
-    </div>
-
-    <p class="narrative"><strong>Remember this. It's about to matter a lot.</strong></p>
-  </div>
-</section>
-
-
-<!-- ==================== STEP 5: GEMINI ==================== -->
-<section class="step-section" id="step-5">
-  <div class="step-content">
-    <div class="chapter-label"><span class="num">5</span> The Twist</div>
+    <div class="chapter-label"><span class="num">4</span> The Twist</div>
     <h2>Then Google Launched Gemini</h2>
 
-    <p class="narrative">Google built Gemini &mdash; a powerful AI that can write, analyze, and generate content. They needed a way for apps to connect to it. And they chose to use... <strong>the same name tag system.</strong></p>
-    <p class="narrative">Same key format. Same setup process. Same <code>AIza...</code> code. But here's the problem:</p>
-
-    <div class="analogy-grid">
-      <div class="analogy-box green">
-        <div class="icon-row">&#128506;</div>
-        <h3>Google Maps (the old way)</h3>
-        <p>You ask: "Show me a map of LA."</p>
-        <p style="margin-top:0.5rem">Google shows you the map. <strong>It was already public.</strong> Anyone could see it. It costs Google almost nothing to serve.</p>
-        <div style="margin-top:0.75rem;font-size:0.85rem;color:var(--success);font-weight:600">Name tag is fine here.</div>
-      </div>
-
-      <div class="analogy-box red">
-        <div class="icon-row">&#129302;</div>
-        <h3>Google Gemini (the new thing)</h3>
-        <p>You ask: "Write me a 5,000-word analysis."</p>
-        <p style="margin-top:0.5rem">Google uses computing power to generate a unique response just for you. <strong>There's no "public" version of this.</strong> Every request costs real money.</p>
-        <div style="margin-top:0.75rem;font-size:0.85rem;color:var(--danger);font-weight:600">A name tag is NOT enough here.</div>
-      </div>
-    </div>
-
-    <p class="narrative">See the problem? A map is like a book on a library shelf &mdash; it's already there, anyone can look at it. But Gemini is like <strong>hiring a personal tutor</strong>. Every question you ask costs money. You wouldn't let just anyone walk up and start using your tutor account.</p>
+    <p class="narrative">Google built Gemini &mdash; a powerful AI that can write, analyze, and generate content. They needed a way for apps to connect to it. And they chose to use <strong>the same name tag system</strong> &mdash; same key format, same setup process, same <code>AIza...</code> code.</p>
+    <p class="narrative">But unlike Maps or YouTube, there's no "public data" with Gemini. Every request uses computing power to generate a unique response. Every request costs real money. A name tag alone isn't enough for that &mdash; it's more like <strong>hiring a personal tutor</strong> than browsing a library shelf.</p>
 
     <div class="callout red">
       <strong style="color:var(--danger)">The disconnect:</strong> Two parts of Google's documentation now say opposite things:<br><br>
@@ -1273,16 +1188,14 @@
       <strong>Gemini docs:</strong> "Treat your Gemini API key like a password."<br><br>
       <span style="color:var(--text-dim)">Both updated January 2026. Both use the exact same key format. Same platform. Likely written by different teams who didn't coordinate.</span>
     </div>
-
-    <p class="narrative">The Gemini team reused the <strong>name tag system</strong> for something that really needed a <strong>full password</strong>. It's the kind of thing that's easy to miss when you're moving fast &mdash; the key format <em>already existed</em>, it was convenient. But it created a serious mismatch. And there was a second problem.</p>
   </div>
 </section>
 
 
-<!-- ==================== STEP 6: THE DEFAULT THAT CHANGED ==================== -->
-<section class="step-section" id="step-6">
+<!-- ==================== STEP 5: THE DEFAULT THAT CHANGED ==================== -->
+<section class="step-section" id="step-5">
   <div class="step-content">
-    <div class="chapter-label"><span class="num">6</span> What Happened Next</div>
+    <div class="chapter-label"><span class="num">5</span> What Happened Next</div>
     <h2>How Existing Keys Gained New Access</h2>
 
     <p class="narrative">When you enable a new API on a Google Cloud project, all existing keys in that project automatically gain access to it. That's the platform default &mdash; and it worked fine when every API served public data. But with Gemini, it meant this:</p>
@@ -1321,10 +1234,10 @@
 </section>
 
 
-<!-- ==================== STEP 7: WHAT HAPPENED ==================== -->
-<section class="step-section" id="step-7">
+<!-- ==================== STEP 6: WHAT HAPPENED ==================== -->
+<section class="step-section" id="step-6">
   <div class="step-content">
-    <div class="chapter-label"><span class="num">7</span> The Fallout</div>
+    <div class="chapter-label"><span class="num">6</span> The Fallout</div>
     <h2>This Wasn't Theoretical</h2>
 
     <p class="narrative">Security researchers at Truffle Security discovered this problem and scanned the internet to see how widespread it was. The numbers were staggering.</p>
@@ -1357,8 +1270,6 @@
         <cite>&mdash; The developer</cite>
       </div>
     </div>
-
-    <p class="narrative">The situation highlighted a real tension: the developer had followed Google's long-standing guidance that API keys didn't need to be protected &mdash; but the security landscape had changed underneath them. To Google's credit, once the scope of the issue became clear, they began blocking leaked keys from accessing Gemini and rolled out proactive notifications.</p>
 
     <div class="timeline" id="timeline">
       <div class="timeline-item" style="transition-delay:0.1s">
@@ -1394,56 +1305,15 @@
 </section>
 
 
-<!-- ==================== STEP 8: THE LESSON ==================== -->
-<section class="step-section" id="step-8">
+<!-- ==================== STEP 7: THE LESSON ==================== -->
+<section class="step-section" id="step-7">
   <div class="step-content">
-    <div class="chapter-label"><span class="num">8</span> What It Means</div>
-    <h2>The Name Tag That Became a Credit Card</h2>
-
-    <p class="narrative">Let's bring it all the way back.</p>
-
-    <div class="visual-card" style="border:none;background:transparent;padding:0">
-      <div class="flow-row">
-        <div class="flow-box glow-green" style="min-width:180px">
-          <div class="f-icon">&#128100;</div>
-          <div class="f-label">Username</div>
-          <div class="f-sub">Identifies you</div>
-          <div class="f-sub" style="color:var(--success);margin-top:4px;font-weight:600">Not secret</div>
-        </div>
-        <div style="text-align:center;color:var(--text-dim);font-size:0.8rem">is to</div>
-        <div class="flow-box glow-green" style="min-width:180px">
-          <div class="f-icon">&#128273;</div>
-          <div class="f-label">API Key</div>
-          <div class="f-sub">Identifies the app</div>
-          <div class="f-sub" style="color:var(--success);margin-top:4px;font-weight:600">Not secret</div>
-        </div>
-      </div>
-
-      <div class="flow-row" style="margin-top:1.5rem">
-        <div class="flow-box glow-red" style="min-width:180px;border-color:var(--danger)">
-          <div class="f-icon">&#128274;</div>
-          <div class="f-label">Password</div>
-          <div class="f-sub">Proves it's you</div>
-          <div class="f-sub" style="color:var(--danger);margin-top:4px;font-weight:600">Keep secret!</div>
-        </div>
-        <div style="text-align:center;color:var(--text-dim);font-size:0.8rem">is to</div>
-        <div class="flow-box glow-red" style="min-width:180px;border-color:var(--danger)">
-          <div class="f-icon">&#128272;</div>
-          <div class="f-label">Client Secret</div>
-          <div class="f-sub">Proves it's the real app</div>
-          <div class="f-sub" style="color:var(--danger);margin-top:4px;font-weight:600">Keep secret!</div>
-        </div>
-      </div>
-    </div>
-
-    <p class="narrative" style="margin-top:2rem">For a decade, the system was clean. Usernames (API keys) were public. Passwords (client secrets) were private. Millions of developers followed the rules.</p>
-    <p class="narrative">Then Gemini reused the <strong>username system</strong> for something that needed a <strong>password</strong>. And critically &mdash; the platform's default behavior meant existing keys automatically gained access to the new service, even keys that had been public for years.</p>
-    <p class="narrative">The developers who got caught up in this weren't careless. They followed the guidance that had been correct for a decade. <strong>The platform evolved faster than the documentation and defaults could keep up.</strong></p>
+    <div class="chapter-label"><span class="num">7</span> What It Means</div>
+    <h2>The Takeaway</h2>
 
     <div class="visual-card" style="border-left:3px solid var(--warning)">
-      <h3 style="color:var(--text-bright);font-size:1.05rem;margin-bottom:1rem">The takeaway, in plain language:</h3>
-      <p style="color:var(--text-dim);font-size:1rem;line-height:1.8;margin-bottom:0">
-        When you log into Gmail, you know your password is secret. When an app connects to Google, it used to be clear which part was the "password" and which was just the "username." Gemini blurred that line &mdash; it reused the username format for something that should have required a password. And because thousands of those "usernames" were already posted publicly (as intended), suddenly the whole world had access to a very expensive machine. Google has since taken steps to fix this &mdash; but it's a powerful reminder of what can go wrong when a platform's assumptions shift and legacy defaults don't shift with them.
+      <p style="color:var(--text-dim);font-size:1.05rem;line-height:1.8;margin-bottom:0">
+        When you log into Gmail, you know your password is secret. When an app connects to Google, it used to be equally clear &mdash; the API key was just a "username," safe to share publicly. Gemini blurred that line by reusing the same key format for a service where every request costs real money. And because thousands of those keys were already posted publicly (as intended), they became a liability overnight. Google has since taken steps to fix this &mdash; but it's a powerful reminder of what can go wrong when a platform's assumptions shift and legacy defaults don't shift with them.
       </p>
     </div>
   </div>
