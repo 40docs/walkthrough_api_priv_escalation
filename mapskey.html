@@ -937,12 +937,11 @@
   <button data-step="1" data-label="Logging In"></button>
   <button data-step="2" data-label="Apps Log In Too"></button>
   <button data-step="3" data-label="Not Everything Needs a Lock"></button>
-  <button data-step="4" data-label="FreshBite's Website"></button>
-  <button data-step="5" data-label="The Two Types"></button>
-  <button data-step="6" data-label="Gemini Changes the Rules"></button>
-  <button data-step="7" data-label="The Silent Upgrade"></button>
-  <button data-step="8" data-label="What Happened Next"></button>
-  <button data-step="9" data-label="The Lesson"></button>
+  <button data-step="4" data-label="The Two Types"></button>
+  <button data-step="5" data-label="Gemini Changes the Rules"></button>
+  <button data-step="6" data-label="The Silent Upgrade"></button>
+  <button data-step="7" data-label="What Happened Next"></button>
+  <button data-step="8" data-label="The Lesson"></button>
 </nav>
 
 
@@ -1037,74 +1036,8 @@
     <h2>But Not Everything Needs a Password</h2>
 
     <p class="narrative">Think about a public library. Anyone can walk in and browse the shelves. You don't need to prove who you are to look at a book &mdash; the books are <em>public</em>.</p>
-    <p class="narrative">The library might ask you to sign in at the front desk &mdash; not to <em>protect</em> the books, but just to <strong>keep track of who's visiting</strong>. That sign-in is an <em>identifier</em>, not a security check.</p>
-
-    <div class="analogy-grid">
-      <div class="analogy-box blue">
-        <div class="icon-row">&#128218;</div>
-        <h3>Public Library</h3>
-        <p>Walk in, browse freely. Sign the guest book so they know you visited. <strong>No password needed.</strong></p>
-        <div style="margin-top:0.75rem;font-size:0.8rem;color:var(--success)">= Using an API key</div>
-      </div>
-
-      <div class="analogy-box red">
-        <div class="icon-row">&#128274;</div>
-        <h3>Bank Vault</h3>
-        <p>Your money. Your documents. Prove who you are, show ID, use a key. <strong>Full authentication.</strong></p>
-        <div style="margin-top:0.75rem;font-size:0.8rem;color:var(--danger)">= Using Client ID + Secret</div>
-      </div>
-    </div>
-
-    <p class="narrative">Google services work the same way. Some information is <strong>completely public</strong>:</p>
-
-    <div class="visual-card">
-      <div style="display:flex;flex-wrap:wrap;gap:1.5rem;justify-content:center;">
-        <div style="text-align:center;min-width:100px">
-          <div style="font-size:2rem">&#128506;</div>
-          <div style="font-size:0.8rem;color:var(--text-dim);margin-top:0.25rem">Map tiles</div>
-          <div style="font-size:0.7rem;color:var(--success)">public</div>
-        </div>
-        <div style="text-align:center;min-width:100px">
-          <div style="font-size:2rem">&#127909;</div>
-          <div style="font-size:0.8rem;color:var(--text-dim);margin-top:0.25rem">Public YouTube videos</div>
-          <div style="font-size:0.7rem;color:var(--success)">public</div>
-        </div>
-        <div style="text-align:center;min-width:100px">
-          <div style="font-size:2rem">&#128205;</div>
-          <div style="font-size:0.8rem;color:var(--text-dim);margin-top:0.25rem">Restaurant locations</div>
-          <div style="font-size:0.7rem;color:var(--success)">public</div>
-        </div>
-        <div style="text-align:center;min-width:100px">
-          <div style="font-size:2rem">&#127760;</div>
-          <div style="font-size:0.8rem;color:var(--text-dim);margin-top:0.25rem">Translations</div>
-          <div style="font-size:0.7rem;color:var(--success)">public</div>
-        </div>
-        <div style="text-align:center;min-width:100px">
-          <div style="font-size:2rem">&#128739;</div>
-          <div style="font-size:0.8rem;color:var(--text-dim);margin-top:0.25rem">Street addresses</div>
-          <div style="font-size:0.7rem;color:var(--success)">public</div>
-        </div>
-      </div>
-    </div>
-
-    <p class="narrative">Anyone with a web browser can already see this information. So when an app wants to show a Google Map or search YouTube videos, Google doesn't demand a full username-and-password login. <strong>It just asks: "Who are you?"</strong></p>
-    <p class="narrative">That's the <strong>API key</strong> &mdash; just the identifier. Just the username. <em>No password needed.</em></p>
-
-    <div class="callout green">
-      <strong style="color:var(--success)">Google's official position for 10+ years:</strong> "API keys are not secrets. You can safely embed them in your website's code." &mdash; Google's own documentation told millions of developers this.
-    </div>
-  </div>
-</section>
-
-
-<!-- ==================== STEP 4: FRESHBITE ==================== -->
-<section class="step-section" id="step-4">
-  <div class="step-content">
-    <div class="chapter-label"><span class="num">4</span> A Real Example</div>
-    <h2>Meet FreshBite &mdash; A Meal Delivery Service</h2>
-
-    <p class="narrative">Let's see this in action. FreshBite is a small meal delivery startup in Los Angeles. Below is their actual website &mdash; <strong>click on any restaurant pin</strong> to see the delivery route, distance, ETA, and fee calculated in real time.</p>
-    <p class="narrative">All of this runs on <strong>one API key, visible in the website code</strong>. Look for the yellow badge at the top.</p>
+    <p class="narrative">The library might ask you to sign in at the front desk &mdash; not to <em>protect</em> the books, but just to <strong>keep track of who's visiting</strong>. That sign-in is an <em>identifier</em>, not a security check. Google works the same way. When an app only needs <strong>public information</strong>, Google doesn't demand a full login &mdash; it just asks for a name tag.</p>
+    <p class="narrative">Here's what that looks like in the real world. <strong>FreshBite</strong> is a small meal delivery startup in LA. Try their map below &mdash; click any restaurant pin:</p>
 
     <!-- ===== INTERACTIVE MAP ===== -->
     <div class="map-wrapper">
@@ -1134,7 +1067,7 @@
         <div class="map-street-label" style="top:10%;left:23%;transform:rotate(90deg);transform-origin:left">N La Brea Ave</div>
         <div class="map-street-label" style="top:10%;left:63%;transform:rotate(90deg);transform-origin:left">N Vermont Ave</div>
 
-        <!-- Restaurant Pins (will be interactive) -->
+        <!-- Restaurant Pins -->
         <div class="map-pin" id="pin-sakura" style="left:18%;top:35%" onclick="selectRestaurant('sakura')">
           <div class="pin-head restaurant"><span>&#127843;</span></div>
           <div class="pin-label">Sakura Sushi</div>
@@ -1175,7 +1108,6 @@
               <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
             </filter>
           </defs>
-          <!-- Route path drawn dynamically -->
           <polyline id="routePath" fill="none" stroke="#3b82f6" stroke-width="3" stroke-dasharray="8,6" stroke-linecap="round" filter="url(#glow)" opacity="0"/>
         </svg>
 
@@ -1206,21 +1138,44 @@
       </div>
     </div>
 
-    <!-- Explanation below the map -->
     <div class="callout green" style="margin-top:0.5rem">
       <strong style="color:var(--success)">Everything you just interacted with is public data.</strong> Map tiles, restaurant locations, street distances, driving directions &mdash; anyone with a browser can see all of it on Google Maps for free. FreshBite's API key doesn't unlock anything private. It just tells Google: <em>"bill these map lookups to FreshBite's account."</em>
     </div>
 
-    <p class="narrative" style="margin-top:0.5rem">That API key &mdash; the one shown in the yellow badge &mdash; is sitting right there in FreshBite's website code. Every visitor can see it. <strong>Google says that's fine.</strong> It's been this way since 2021. It's just a name tag.</p>
+    <p class="narrative" style="margin-top:1.5rem">FreshBite isn't unusual. <strong>Millions of websites</strong> use the same approach &mdash; public API key, right there in the code. Here are a few more everyday examples:</p>
+
+    <!-- Other examples -->
+    <div class="analogy-grid" style="grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));">
+      <div class="analogy-box green">
+        <div class="icon-row">&#127909;</div>
+        <h3>Video Streaming Site</h3>
+        <p>Searches YouTube's public catalog to show trending music videos. Anyone could search this on youtube.com &mdash; the key just lets the app do it automatically.</p>
+        <div style="margin-top:0.75rem;font-size:0.7rem;color:var(--success)">YouTube Data API &bull; public</div>
+      </div>
+      <div class="analogy-box green">
+        <div class="icon-row">&#128200;</div>
+        <h3>Real Estate Listing</h3>
+        <p>Embeds a map on each property page showing the neighborhood, nearby schools, and transit. All public geographic data.</p>
+        <div style="margin-top:0.75rem;font-size:0.7rem;color:var(--success)">Maps &amp; Places API &bull; public</div>
+      </div>
+      <div class="analogy-box green">
+        <div class="icon-row">&#9992;&#65039;</div>
+        <h3>Travel Blog</h3>
+        <p>Shows an interactive map of the author's trip with pins for each city. The same info you'd see opening Google Maps yourself.</p>
+        <div style="margin-top:0.75rem;font-size:0.7rem;color:var(--success)">Maps JavaScript API &bull; public</div>
+      </div>
+    </div>
+
+    <p class="narrative" style="margin-top:1rem;">In every case, the API key is visible in the website's code. Google told developers for over a decade: <strong>that's fine. It's just a name tag &mdash; not a password.</strong></p>
     <p class="narrative"><strong>Nothing to worry about... right?</strong></p>
   </div>
 </section>
 
 
-<!-- ==================== STEP 5: THE TWO TYPES ==================== -->
-<section class="step-section" id="step-5">
+<!-- ==================== STEP 4: THE TWO TYPES ==================== -->
+<section class="step-section" id="step-4">
   <div class="step-content">
-    <div class="chapter-label"><span class="num">5</span> The Full Picture</div>
+    <div class="chapter-label"><span class="num">4</span> The Full Picture</div>
     <h2>Two Types of Access. Clear Rules.</h2>
 
     <p class="narrative">For over a decade, Google maintained a clean, simple system that everyone understood:</p>
@@ -1273,10 +1228,10 @@
 </section>
 
 
-<!-- ==================== STEP 6: GEMINI ==================== -->
-<section class="step-section" id="step-6">
+<!-- ==================== STEP 5: GEMINI ==================== -->
+<section class="step-section" id="step-5">
   <div class="step-content">
-    <div class="chapter-label"><span class="num">6</span> The Twist</div>
+    <div class="chapter-label"><span class="num">5</span> The Twist</div>
     <h2>Then Google Launched Gemini</h2>
 
     <p class="narrative">Google built Gemini &mdash; a powerful AI that can write, analyze, and generate content. They needed a way for apps to connect to it. And they chose to use... <strong>the same name tag system.</strong></p>
@@ -1314,10 +1269,10 @@
 </section>
 
 
-<!-- ==================== STEP 7: THE SILENT UPGRADE ==================== -->
-<section class="step-section" id="step-7">
+<!-- ==================== STEP 6: THE SILENT UPGRADE ==================== -->
+<section class="step-section" id="step-6">
   <div class="step-content">
-    <div class="chapter-label"><span class="num">7</span> The Real Danger</div>
+    <div class="chapter-label"><span class="num">6</span> The Real Danger</div>
     <h2>The Silent Upgrade Nobody Asked For</h2>
 
     <p class="narrative">Here's what made this truly dangerous. Remember FreshBite's API key from 2021 &mdash; the one sitting in their public website code, visible to anyone?</p>
@@ -1384,10 +1339,10 @@
 </section>
 
 
-<!-- ==================== STEP 8: WHAT HAPPENED ==================== -->
-<section class="step-section" id="step-8">
+<!-- ==================== STEP 7: WHAT HAPPENED ==================== -->
+<section class="step-section" id="step-7">
   <div class="step-content">
-    <div class="chapter-label"><span class="num">8</span> The Fallout</div>
+    <div class="chapter-label"><span class="num">7</span> The Fallout</div>
     <h2>This Wasn't Theoretical</h2>
 
     <p class="narrative">Security researchers at Truffle Security discovered this problem and scanned the internet to see how widespread it was. The numbers were staggering.</p>
@@ -1453,10 +1408,10 @@
 </section>
 
 
-<!-- ==================== STEP 9: THE LESSON ==================== -->
-<section class="step-section" id="step-9">
+<!-- ==================== STEP 8: THE LESSON ==================== -->
+<section class="step-section" id="step-8">
   <div class="step-content">
-    <div class="chapter-label"><span class="num">9</span> What It Means</div>
+    <div class="chapter-label"><span class="num">8</span> What It Means</div>
     <h2>The Name Tag That Became a Credit Card</h2>
 
     <p class="narrative">Let's bring it all the way back.</p>
