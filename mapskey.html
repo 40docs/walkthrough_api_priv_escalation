@@ -1143,8 +1143,8 @@
     </div>
 
     <div class="visual-card" style="margin-top:0;border-radius:0 0 12px 12px;border-top:none;padding:1.5rem 1.75rem;">
-      <p class="narrative" style="margin-bottom:1rem;max-width:100%">When <strong>you</strong> open Google Maps on your phone, Google doesn't charge you. You're the product &mdash; they show you ads, learn your habits, collect location data. That's the deal.</p>
-      <p class="narrative" style="margin-bottom:1rem;max-width:100%">But when <strong>FreshBite</strong> embeds that same map into their own website, Google doesn't get those benefits. FreshBite's customers see FreshBite's brand, not Google's ads. So Google says:</p>
+      <p class="narrative" style="margin-bottom:1rem;max-width:100%">When <strong>you</strong> open Google Maps on your phone, Google offers it free because they earn revenue through ads shown alongside the map.</p>
+      <p class="narrative" style="margin-bottom:1rem;max-width:100%">But when <strong>FreshBite</strong> embeds that same map into their own website, there are no Google ads &mdash; FreshBite's customers see FreshBite's brand. So Google charges FreshBite a small fee per lookup instead:</p>
       <div class="quote-block" style="margin:0.75rem 0;border-color:var(--success)">
         "You can use my maps &mdash; but since I'm not making ad revenue from your users, I'm going to charge <em>you</em> per lookup. Give me a key so I know who to bill."
         <cite>&mdash; The business logic behind API keys</cite>
@@ -1268,13 +1268,13 @@
     <p class="narrative">See the problem? A map is like a book on a library shelf &mdash; it's already there, anyone can look at it. But Gemini is like <strong>hiring a personal tutor</strong>. Every question you ask costs money. You wouldn't let just anyone walk up and start using your tutor account.</p>
 
     <div class="callout red">
-      <strong style="color:var(--danger)">The contradiction:</strong> Google's own documentation now says two opposite things at the same time:<br><br>
+      <strong style="color:var(--danger)">The disconnect:</strong> Two parts of Google's documentation now say opposite things:<br><br>
       <strong>Firebase docs:</strong> "You do not need to treat API keys as secrets."<br>
       <strong>Gemini docs:</strong> "Treat your Gemini API key like a password."<br><br>
-      <span style="color:var(--text-dim)">Both updated January 2026. Both use the exact same key format. Same platform.</span>
+      <span style="color:var(--text-dim)">Both updated January 2026. Both use the exact same key format. Same platform. Likely written by different teams who didn't coordinate.</span>
     </div>
 
-    <p class="narrative">Google used the <strong>name tag system</strong> for something that needed a <strong>full password</strong>. That was the mistake. But it gets worse.</p>
+    <p class="narrative">The Gemini team reused the <strong>name tag system</strong> for something that really needed a <strong>full password</strong>. It's the kind of thing that's easy to miss when you're moving fast &mdash; the key format <em>already existed</em>, it was convenient. But it created a serious mismatch. And there was a second problem.</p>
   </div>
 </section>
 
@@ -1317,9 +1317,9 @@
       </div>
     </div>
 
-    <p class="narrative">Let's go back to our analogy. Imagine you have a library card &mdash; it lets you browse public books. One day, the library <em>silently</em> upgrades your card so it also works as a <strong>credit card</strong>. No notification. No email. No confirmation dialog. And your library card number is printed on your public blog.</p>
+    <p class="narrative">This almost certainly wasn't intentional. When you enable a new API on a Google Cloud project, <em>all</em> existing keys gain access to it by default &mdash; that's how the platform has always worked. It made sense when every API served public data. Nobody anticipated that one day an API would come along where that default would be dangerous.</p>
 
-    <p class="narrative"><strong>That's exactly what happened.</strong></p>
+    <p class="narrative">Think of it this way: imagine you have a library card that lets you browse public books. One day, the library adds a new service &mdash; paid tutoring &mdash; and your existing card automatically works for that too. No notification. No email. No confirmation. And your library card number is printed on your public blog.</p>
 
     <p class="narrative">Anyone who visits FreshBite's website can see the API key in the code. Before Gemini, that was harmless &mdash; like seeing a library card number. After the silent upgrade, that same visible string lets a stranger:</p>
 
@@ -1382,24 +1382,24 @@
 
       <div class="quote-block" style="border-color:var(--danger);background:rgba(239,68,68,0.05);margin-top:1.25rem">
         "If Google attempts to enforce even a third of this amount, our company goes bankrupt."
-        <cite>&mdash; The developer, after Google initially declined to waive the charges</cite>
+        <cite>&mdash; The developer</cite>
       </div>
     </div>
 
-    <p class="narrative">When the developer asked Google for help, Google cited "shared responsibility" &mdash; saying <em>they</em> should have protected their key. But this was a key Google's own documentation said <strong>didn't need to be protected.</strong></p>
+    <p class="narrative">The situation highlighted a real tension: the developer had followed Google's long-standing guidance that API keys didn't need to be protected &mdash; but the security landscape had changed underneath them. To Google's credit, once the scope of the issue became clear, they began blocking leaked keys from accessing Gemini and rolled out proactive notifications.</p>
 
     <div class="timeline" id="timeline">
       <div class="timeline-item" style="transition-delay:0.1s">
         <div class="timeline-date">Nov 21, 2025</div>
         <div class="timeline-text">Truffle Security reports the vulnerability to Google</div>
       </div>
-      <div class="timeline-item bad" style="transition-delay:0.2s">
+      <div class="timeline-item" style="transition-delay:0.2s">
         <div class="timeline-date">Nov 25, 2025</div>
-        <div class="timeline-text">Google dismisses it as "intended behavior"</div>
+        <div class="timeline-text">Initial triage classifies it as "intended behavior"</div>
       </div>
       <div class="timeline-item" style="transition-delay:0.3s">
         <div class="timeline-date">Dec 1, 2025</div>
-        <div class="timeline-text">Researchers show examples from Google's own websites. Google reclassifies as a bug.</div>
+        <div class="timeline-text">After further examples, Google escalates and reclassifies as a bug</div>
       </div>
       <div class="timeline-item" style="transition-delay:0.4s">
         <div class="timeline-date">Jan 13, 2026</div>
@@ -1409,7 +1409,11 @@
         <div class="timeline-date">Feb 11-12, 2026</div>
         <div class="timeline-text">A 3-person startup gets an $82,314 Gemini bill in 48 hours</div>
       </div>
-      <div class="timeline-item bad" style="transition-delay:0.6s">
+      <div class="timeline-item" style="transition-delay:0.6s">
+        <div class="timeline-date">Feb 2026</div>
+        <div class="timeline-text">Google begins blocking leaked keys from Gemini access, scopes new AI Studio keys, adds leak notifications</div>
+      </div>
+      <div class="timeline-item" style="transition-delay:0.7s">
         <div class="timeline-date">Feb 25, 2026</div>
         <div class="timeline-text">Public disclosure. Major tech media covers the story worldwide.</div>
       </div>
@@ -1461,13 +1465,13 @@
     </div>
 
     <p class="narrative" style="margin-top:2rem">For a decade, the system was clean. Usernames (API keys) were public. Passwords (client secrets) were private. Millions of developers followed the rules.</p>
-    <p class="narrative">Then Google used the <strong>username system</strong> for something that needed a <strong>password</strong>. And worse &mdash; they silently upgraded everyone's existing usernames to also work as passwords, without telling anyone.</p>
-    <p class="narrative">The developers who got hurt weren't careless. They did exactly what Google told them to do. <strong>The platform changed the rules underneath them.</strong></p>
+    <p class="narrative">Then Gemini reused the <strong>username system</strong> for something that needed a <strong>password</strong>. And critically &mdash; the platform's default behavior meant existing keys automatically gained access to the new service, even keys that had been public for years.</p>
+    <p class="narrative">The developers who got caught up in this weren't careless. They followed the guidance that had been correct for a decade. <strong>The platform evolved faster than the documentation and defaults could keep up.</strong></p>
 
     <div class="visual-card" style="border-left:3px solid var(--warning)">
       <h3 style="color:var(--text-bright);font-size:1.05rem;margin-bottom:1rem">The takeaway, in plain language:</h3>
       <p style="color:var(--text-dim);font-size:1rem;line-height:1.8;margin-bottom:0">
-        When you log into Gmail, you know your password is secret. When an app connects to Google, it used to be clear which part was the "password" and which was just the "username." Gemini blurred that line &mdash; it used the username format for something that should have required a password. And because thousands of those "usernames" were already posted publicly (as intended), suddenly the whole world had the keys to a very expensive machine.
+        When you log into Gmail, you know your password is secret. When an app connects to Google, it used to be clear which part was the "password" and which was just the "username." Gemini blurred that line &mdash; it reused the username format for something that should have required a password. And because thousands of those "usernames" were already posted publicly (as intended), suddenly the whole world had access to a very expensive machine. Google has since taken steps to fix this &mdash; but it's a powerful reminder of what can go wrong when a platform's assumptions shift and legacy defaults don't shift with them.
       </p>
     </div>
   </div>
