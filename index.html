@@ -1316,8 +1316,14 @@
     <h2>The Takeaway</h2>
 
     <div class="visual-card" style="border-left:3px solid var(--warning)">
-      <p style="color:var(--text-dim);font-size:1.05rem;line-height:1.8;margin-bottom:0">
-        When you log into Gmail, you know your password is secret. When an app connects to Google, it used to be equally clear &mdash; the API key was just a "username," safe to share publicly. Gemini blurred that line by reusing the same key format for a service where every request costs real money. And because thousands of those keys were already posted publicly (as intended), they became a liability overnight. Google has since taken steps to fix this &mdash; but it's a powerful reminder of what can go wrong when a platform's assumptions shift and legacy defaults don't shift with them.
+      <p style="color:var(--text);font-size:1.05rem;line-height:1.8;margin-bottom:1rem">
+        For most teams, this was effectively unavoidable.
+      </p>
+      <p style="color:var(--text-dim);font-size:1rem;line-height:1.8;margin-bottom:1rem">
+        If you hadn't read the Truffle Security article before Google acknowledged the issue, there was no reason to suspect anything was wrong. The documentation said API keys were safe to publish. Security scanning tools that flagged exposed Google API keys were routinely ignored or whitelisted &mdash; because using them this way was the <em>documented, supported approach</em>.
+      </p>
+      <p style="color:var(--text-dim);font-size:1rem;line-height:1.8;margin-bottom:0">
+        The lesson isn't that someone made a mistake. It's that platform defaults can carry hidden assumptions &mdash; and when those assumptions stop being true, the people who followed the rules are the ones left exposed. Google has since taken steps to address this, but it's a reminder that "safe by default" only holds as long as the defaults keep up with the platform.
       </p>
     </div>
   </div>
