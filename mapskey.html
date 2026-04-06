@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Key That Wasn't a Secret &mdash; Until It Was</title>
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --card: #111827;
+    --card-border: #1e293b;
+    --accent: #3b82f6;
+    --accent-glow: rgba(59,130,246,0.3);
+    --danger: #ef4444;
+    --danger-glow: rgba(239,68,68,0.3);
+    --success: #22c55e;
+    --warning: #f59e0b;
+    --text: #e2e8f0;
+    --text-dim: #94a3b8;
+    --text-bright: #f8fafc;
+    --google-blue: #4285f4;
+    --google-red: #ea4335;
+    --google-yellow: #fbbc05;
+    --google-green: #34a853;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--google-blue), var(--google-red), var(--google-yellow), var(--google-green));
+    z-index: 1000;
+    transition: width 0.3s;
+  }
+
+  /* Navigation */
+  .step-nav {
+    position: fixed;
+    right: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .step-nav button {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--text-dim);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+  }
+
+  .step-nav button.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 10px var(--accent-glow);
+  }
+
+  .step-nav button:hover::after {
+    content: attr(data-label);
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    color: var(--text);
+  }
+
+  /* Hero */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at center, rgba(59,130,246,0.08) 0%, transparent 60%);
+    animation: pulse-bg 8s ease-in-out infinite;
+  }
+
+  @keyframes pulse-bg {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.1); }
+  }
+
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 800;
+    color: var(--text-bright);
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+    max-width: 750px;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--google-blue), var(--google-red), var(--google-yellow), var(--google-green));
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradient-shift 6s ease infinite;
+  }
+
+  @keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .hero .subtitle {
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    color: var(--text-dim);
+    max-width: 600px;
+    margin-bottom: 3rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .scroll-hint {
+    position: relative;
+    z-index: 1;
+    animation: bounce 2s infinite;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
+  .scroll-hint svg {
+    display: block;
+    margin: 0.5rem auto 0;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(10px); }
+  }
+
+  /* Sections */
+  .step-section {
+    min-height: 100vh;
+    padding: 5rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .step-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .step-content {
+    max-width: 820px;
+    width: 100%;
+  }
+
+  .chapter-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+
+  .chapter-label .num {
+    background: var(--accent);
+    color: #fff;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+  }
+
+  .step-section h2 {
+    font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+    font-weight: 700;
+    color: var(--text-bright);
+    margin-bottom: 1.5rem;
+  }
+
+  .narrative {
+    color: var(--text-dim);
+    font-size: 1.1rem;
+    margin-bottom: 1.25rem;
+    max-width: 700px;
+    line-height: 1.8;
+  }
+
+  .narrative strong { color: var(--text-bright); }
+
+  /* Visual cards */
+  .visual-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 2rem 0;
+  }
+
+  /* Analogy boxes */
+  .analogy-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  @media (max-width: 700px) {
+    .analogy-grid { grid-template-columns: 1fr; }
+    .step-nav { display: none; }
+    .step-section { padding: 3rem 1rem; }
+  }
+
+  .analogy-box {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 1.8rem;
+    transition: transform 0.3s;
+  }
+
+  .analogy-box:hover { transform: translateY(-3px); }
+
+  .analogy-box .icon-row {
+    font-size: 2.2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .analogy-box h3 {
+    font-size: 1rem;
+    color: var(--text-bright);
+    margin-bottom: 0.5rem;
+  }
+
+  .analogy-box p {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  .analogy-box.green { border-top: 3px solid var(--success); }
+  .analogy-box.red { border-top: 3px solid var(--danger); }
+  .analogy-box.orange { border-top: 3px solid var(--warning); }
+  .analogy-box.blue { border-top: 3px solid var(--accent); }
+
+  /* Interactive login sim */
+  .login-sim {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 2rem 0;
+    text-align: center;
+    max-width: 400px;
+  }
+
+  .login-sim.wide { max-width: 100%; text-align: left; }
+
+  .login-sim h3 {
+    margin-bottom: 1.5rem;
+    color: var(--text-bright);
+    font-size: 1rem;
+  }
+
+  .sim-field {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0.75rem 0;
+    padding: 0.75rem 1rem;
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+    border: 1px solid var(--card-border);
+    transition: border-color 0.3s;
+  }
+
+  .sim-field.green { border-color: rgba(34,197,94,0.4); }
+  .sim-field.red { border-color: rgba(239,68,68,0.4); }
+
+  .sim-field .field-icon { font-size: 1.2rem; flex-shrink: 0; }
+
+  .sim-field .field-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    min-width: 70px;
+  }
+
+  .sim-field .field-value {
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .sim-field .field-value.masked { color: var(--danger); }
+  .sim-field .field-value.visible { color: var(--success); }
+
+  .sim-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 0.5rem;
+  }
+
+  .sim-tag.public { background: rgba(34,197,94,0.15); color: var(--success); }
+  .sim-tag.private { background: rgba(239,68,68,0.15); color: var(--danger); }
+
+  /* Quote */
+  .quote-block {
+    border-left: 3px solid var(--warning);
+    padding: 1rem 1.5rem;
+    margin: 1.5rem 0;
+    background: rgba(245,158,11,0.05);
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+    color: var(--text);
+    font-size: 1rem;
+  }
+
+  .quote-block cite {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    font-style: normal;
+  }
+
+  /* Tabs */
+  .tab-container { margin: 2rem 0; }
+
+  .tab-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .tab-btn {
+    padding: 0.6rem 1.2rem;
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+
+  .tab-btn:hover { border-color: var(--accent); color: var(--text); }
+  .tab-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  .tab-panel {
+    display: none;
+    animation: fadeIn 0.4s ease;
+  }
+
+  .tab-panel.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Flow diagrams */
+  .flow-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin: 1.5rem 0;
+  }
+
+  .flow-box {
+    background: rgba(30,41,59,0.8);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 1.2rem 1.5rem;
+    text-align: center;
+    min-width: 140px;
+    transition: all 0.4s;
+  }
+
+  .flow-box.glow-blue { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
+  .flow-box.glow-green { border-color: var(--success); box-shadow: 0 0 15px rgba(34,197,94,0.2); }
+  .flow-box.glow-red { border-color: var(--danger); box-shadow: 0 0 15px var(--danger-glow); }
+
+  .flow-box .f-icon { font-size: 2rem; margin-bottom: 0.4rem; }
+  .flow-box .f-label { font-weight: 600; font-size: 0.85rem; color: var(--text-bright); }
+  .flow-box .f-sub { font-size: 0.7rem; color: var(--text-dim); margin-top: 0.25rem; }
+
+  .flow-arrow {
+    color: var(--text-dim);
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .flow-arrow.green { color: var(--success); }
+  .flow-arrow.red { color: var(--danger); }
+
+  /* Feature cards for FreshBite */
+  .feature-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.2rem;
+    margin: 0.75rem 0;
+    background: rgba(30,41,59,0.5);
+    border-radius: 10px;
+    border: 1px solid var(--card-border);
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+
+  .feature-card:hover { border-color: var(--accent); }
+  .feature-card.expanded { background: rgba(30,41,59,0.8); }
+
+  .feature-card .feat-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 2px; }
+
+  .feature-card .feat-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-bright);
+  }
+
+  .feature-card .feat-desc {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-top: 0.25rem;
+  }
+
+  .feature-card .feat-why {
+    font-size: 0.8rem;
+    color: var(--success);
+    margin-top: 0.5rem;
+    display: none;
+  }
+
+  .feature-card.expanded .feat-why { display: block; }
+
+  /* Escalation visual */
+  .before-after {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin: 2rem 0;
+  }
+
+  .ba-card {
+    padding: 1.5rem;
+    border: 1px solid var(--card-border);
+    background: var(--card);
+  }
+
+  .ba-card:first-child { border-radius: 12px 12px 0 0; border-left: 3px solid var(--success); }
+  .ba-card:last-child { border-radius: 0 0 12px 12px; border-left: 3px solid var(--danger); }
+
+  .ba-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 0.75rem;
+  }
+
+  .ba-card:first-child .ba-label { color: var(--success); }
+  .ba-card:last-child .ba-label { color: var(--danger); }
+
+  .ba-divider {
+    text-align: center;
+    padding: 0.6rem;
+    background: rgba(245,158,11,0.1);
+    border: 1px solid var(--card-border);
+    border-left: 3px solid var(--warning);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--warning);
+  }
+
+  .chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .chip {
+    padding: 0.25rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid;
+  }
+
+  .chip.safe { border-color: rgba(34,197,94,0.3); color: var(--success); background: rgba(34,197,94,0.1); }
+  .chip.danger { border-color: rgba(239,68,68,0.3); color: var(--danger); background: rgba(239,68,68,0.1); animation: pulse-chip 2s infinite; }
+
+  @keyframes pulse-chip {
+    0%, 100% { box-shadow: none; }
+    50% { box-shadow: 0 0 10px var(--danger-glow); }
+  }
+
+  /* Incident */
+  .incident-card {
+    background: linear-gradient(135deg, rgba(239,68,68,0.05), rgba(245,158,11,0.05));
+    border: 1px solid rgba(239,68,68,0.3);
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 2rem 0;
+  }
+
+  .incident-card h3 { color: var(--danger); font-size: 1.2rem; margin-bottom: 0.75rem; }
+
+  .money {
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 800;
+    color: var(--danger);
+    text-shadow: 0 0 30px var(--danger-glow);
+    margin: 0.75rem 0;
+  }
+
+  /* Stats */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 0.25rem;
+  }
+
+  .stat-num.blue { color: var(--accent); }
+  .stat-num.red { color: var(--danger); }
+  .stat-num.yellow { color: var(--warning); }
+
+  .stat-label { font-size: 0.8rem; color: var(--text-dim); }
+
+  /* Timeline */
+  .timeline {
+    position: relative;
+    margin: 2rem 0;
+    padding-left: 2rem;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent), var(--danger));
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.5s;
+  }
+
+  .timeline-item.visible { opacity: 1; transform: translateX(0); }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -1.85rem;
+    top: 6px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+  }
+
+  .timeline-item.bad::before { background: var(--danger); }
+
+  .timeline-date {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .timeline-item.bad .timeline-date { color: var(--danger); }
+
+  .timeline-text { color: var(--text-dim); font-size: 0.9rem; margin-top: 0.25rem; }
+
+  /* Callout box */
+  .callout {
+    padding: 1.2rem 1.5rem;
+    border-radius: 10px;
+    margin: 1.5rem 0;
+    font-size: 0.95rem;
+  }
+
+  .callout.green { background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); }
+  .callout.red { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); }
+  .callout.blue { background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.2); }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 3rem 2rem;
+    border-top: 1px solid var(--card-border);
+    color: var(--text-dim);
+    font-size: 0.85rem;
+  }
+
+  .footer a { color: var(--accent); text-decoration: none; }
+  .footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<nav class="step-nav" id="stepNav">
+  <button data-step="0" data-label="Start" class="active"></button>
+  <button data-step="1" data-label="Logging In"></button>
+  <button data-step="2" data-label="Apps Log In Too"></button>
+  <button data-step="3" data-label="Not Everything Needs a Lock"></button>
+  <button data-step="4" data-label="FreshBite's Website"></button>
+  <button data-step="5" data-label="The Two Types"></button>
+  <button data-step="6" data-label="Gemini Changes the Rules"></button>
+  <button data-step="7" data-label="The Silent Upgrade"></button>
+  <button data-step="8" data-label="What Happened Next"></button>
+  <button data-step="9" data-label="The Lesson"></button>
+</nav>
+
+
+<!-- ==================== HERO ==================== -->
+<section class="hero" id="step-0">
+  <h1>The Key That <em>Wasn't a Secret</em> &mdash; Until It Was</h1>
+  <p class="subtitle">A story about logging in, public information, and what happens when the rules change without warning.</p>
+  <div class="scroll-hint" onclick="document.getElementById('step-1').scrollIntoView({behavior:'smooth'})">
+    No technical background needed. Scroll to begin.
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+  </div>
+</section>
+
+
+<!-- ==================== STEP 1: LOGGING IN ==================== -->
+<section class="step-section" id="step-1">
+  <div class="step-content">
+    <div class="chapter-label"><span class="num">1</span> Something You Already Know</div>
+    <h2>You Log Into Gmail Every Day</h2>
+
+    <p class="narrative">When you open Gmail, you type two things: your <strong>email address</strong> and your <strong>password</strong>.</p>
+    <p class="narrative">Your email address tells Google <em>who you are</em>. Your password <em>proves</em> it's really you. Without both, you don't get in.</p>
+
+    <div style="display:flex;justify-content:center;">
+      <div class="login-sim">
+        <h3>Sign in to Google</h3>
+        <div class="sim-field green">
+          <span class="field-icon">&#128100;</span>
+          <span class="field-label">Email</span>
+          <span class="field-value visible">you@gmail.com</span>
+        </div>
+        <div class="sim-field red">
+          <span class="field-icon">&#128274;</span>
+          <span class="field-label">Password</span>
+          <span class="field-value masked">&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;</span>
+        </div>
+        <div style="margin-top:1.25rem;display:flex;gap:1rem;justify-content:center;">
+          <div><span class="sim-tag public">public &mdash; you share it freely</span></div>
+          <div><span class="sim-tag private">secret &mdash; you tell no one</span></div>
+        </div>
+      </div>
+    </div>
+
+    <p class="narrative" style="margin-top:1.5rem;">This is something everyone understands intuitively. <strong>Your email address isn't secret</strong> &mdash; it's on your business card, your LinkedIn, your receipts. But your <strong>password is sacred</strong>. You don't write it on a sticky note. You don't share it in a group chat.</p>
+    <p class="narrative">One identifies you. The other protects you. Keep this distinction in mind &mdash; <strong>it's the whole story.</strong></p>
+  </div>
+</section>
+
+
+<!-- ==================== STEP 2: APPS LOG IN TOO ==================== -->
+<section class="step-section" id="step-2">
+  <div class="step-content">
+    <div class="chapter-label"><span class="num">2</span> Now Think Bigger</div>
+    <h2>Applications Log In Too</h2>
+
+    <p class="narrative">When a website or app needs to talk to a service like Google, it works the same way. The app needs to say <strong>"who am I?"</strong> and <strong>"prove it."</strong></p>
+    <p class="narrative">But apps aren't humans. They don't have birthdays they can use as passwords, or pet names they'll inevitably forget. So instead, they get something more robust:</p>
+
+    <div class="analogy-grid">
+      <div class="analogy-box green">
+        <div class="icon-row">&#128100;</div>
+        <h3>Client ID</h3>
+        <p>The app's "username." It tells the service <em>which app</em> is connecting. Like your email address &mdash; it's not a secret.</p>
+        <div style="font-family:monospace;font-size:0.7rem;background:rgba(0,0,0,0.3);padding:0.5rem;border-radius:6px;margin-top:0.75rem;color:var(--success);word-break:break-all;">
+          123456789-abc.apps.googleusercontent.com
+        </div>
+      </div>
+
+      <div class="analogy-box red">
+        <div class="icon-row">&#128274;</div>
+        <h3>Client Secret</h3>
+        <p>The app's "password." It <em>proves</em> the app is who it claims to be. Longer, random, impossible to guess &mdash; way harder to crack than someone's birthday.</p>
+        <div style="font-family:monospace;font-size:0.7rem;background:rgba(0,0,0,0.3);padding:0.5rem;border-radius:6px;margin-top:0.75rem;color:var(--danger);word-break:break-all;">
+          GOCSPX-xK9f_2mR7vNpL3qYwZjT8bC5hA
+        </div>
+      </div>
+    </div>
+
+    <p class="narrative">Together, the <strong>Client ID + Client Secret</strong> work just like your email + password. The ID says "I'm FreshBite's meal delivery app." The secret proves it. If someone steals the secret, they can <em>pretend</em> to be FreshBite &mdash; just like someone who steals your Gmail password can pretend to be you.</p>
+
+    <div class="callout blue">
+      <strong style="color:var(--accent)">The key idea:</strong> This is how apps access <strong>private</strong> things &mdash; a user's personal emails, their private playlists, their payment info. Private things need real credentials, just like your inbox needs your password.
+    </div>
+  </div>
+</section>
+
+
+<!-- ==================== STEP 3: NOT EVERYTHING NEEDS A LOCK ==================== -->
+<section class="step-section" id="step-3">
+  <div class="step-content">
+    <div class="chapter-label"><span class="num">3</span> The Big Insight</div>
+    <h2>But Not Everything Needs a Password</h2>
+
+    <p class="narrative">Think about a public library. Anyone can walk in and browse the shelves. You don't need to prove who you are to look at a book &mdash; the books are <em>public</em>.</p>
+    <p class="narrative">The library might ask you to sign in at the front desk &mdash; not to <em>protect</em> the books, but just to <strong>keep track of who's visiting</strong>. That sign-in is an <em>identifier</em>, not a security check.</p>
+
+    <div class="analogy-grid">
+      <div class="analogy-box blue">
+        <div class="icon-row">&#128218;</div>
+        <h3>Public Library</h3>
+        <p>Walk in, browse freely. Sign the guest book so they know you visited. <strong>No password needed.</strong></p>
+        <div style="margin-top:0.75rem;font-size:0.8rem;color:var(--success)">= Using an API key</div>
+      </div>
+
+      <div class="analogy-box red">
+        <div class="icon-row">&#128274;</div>
+        <h3>Bank Vault</h3>
+        <p>Your money. Your documents. Prove who you are, show ID, use a key. <strong>Full authentication.</strong></p>
+        <div style="margin-top:0.75rem;font-size:0.8rem;color:var(--danger)">= Using Client ID + Secret</div>
+      </div>
+    </div>
+
+    <p class="narrative">Google services work the same way. Some information is <strong>completely public</strong>:</p>
+
+    <div class="visual-card">
+      <div style="display:flex;flex-wrap:wrap;gap:1.5rem;justify-content:center;">
+        <div style="text-align:center;min-width:100px">
+          <div style="font-size:2rem">&#128506;</div>
+          <div style="font-size:0.8rem;color:var(--text-dim);margin-top:0.25rem">Map tiles</div>
+          <div style="font-size:0.7rem;color:var(--success)">public</div>
+        </div>
+        <div style="text-align:center;min-width:100px">
+          <div style="font-size:2rem">&#127909;</div>
+          <div style="font-size:0.8rem;color:var(--text-dim);margin-top:0.25rem">Public YouTube videos</div>
+          <div style="font-size:0.7rem;color:var(--success)">public</div>
+        </div>
+        <div style="text-align:center;min-width:100px">
+          <div style="font-size:2rem">&#128205;</div>
+          <div style="font-size:0.8rem;color:var(--text-dim);margin-top:0.25rem">Restaurant locations</div>
+          <div style="font-size:0.7rem;color:var(--success)">public</div>
+        </div>
+        <div style="text-align:center;min-width:100px">
+          <div style="font-size:2rem">&#127760;</div>
+          <div style="font-size:0.8rem;color:var(--text-dim);margin-top:0.25rem">Translations</div>
+          <div style="font-size:0.7rem;color:var(--success)">public</div>
+        </div>
+        <div style="text-align:center;min-width:100px">
+          <div style="font-size:2rem">&#128739;</div>
+          <div style="font-size:0.8rem;color:var(--text-dim);margin-top:0.25rem">Street addresses</div>
+          <div style="font-size:0.7rem;color:var(--success)">public</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="narrative">Anyone with a web browser can already see this information. So when an app wants to show a Google Map or search YouTube videos, Google doesn't demand a full username-and-password login. <strong>It just asks: "Who are you?"</strong></p>
+    <p class="narrative">That's the <strong>API key</strong> &mdash; just the identifier. Just the username. <em>No password needed.</em></p>
+
+    <div class="callout green">
+      <strong style="color:var(--success)">Google's official position for 10+ years:</strong> "API keys are not secrets. You can safely embed them in your website's code." &mdash; Google's own documentation told millions of developers this.
+    </div>
+  </div>
+</section>
+
+
+<!-- ==================== STEP 4: FRESHBITE ==================== -->
+<section class="step-section" id="step-4">
+  <div class="step-content">
+    <div class="chapter-label"><span class="num">4</span> A Real Example</div>
+    <h2>Meet FreshBite &mdash; A Meal Delivery Service</h2>
+
+    <p class="narrative">Let's see this in action. FreshBite is a small meal delivery startup. Their website uses Google's public services for five features &mdash; and <strong>every one requires the API key to be visible in the website's code.</strong></p>
+
+    <div style="display:flex;align-items:center;gap:1rem;margin:1.5rem 0;padding:1.2rem;background:var(--card);border:1px solid var(--card-border);border-radius:12px;">
+      <div style="font-size:2.5rem">&#127858;</div>
+      <div>
+        <div style="font-weight:700;color:var(--text-bright);font-size:1.1rem;">FreshBite Meals</div>
+        <div style="font-size:0.8rem;color:var(--text-dim);">Local meal delivery in Los Angeles. API key created March 2021.</div>
+      </div>
+    </div>
+
+    <p class="narrative" style="font-size:0.95rem;margin-bottom:0.5rem;">Click any feature to see why it's safe with just an identifier:</p>
+
+    <div class="visual-card" style="padding:1.25rem">
+      <div class="feature-card" onclick="toggleFeature(this)">
+        <div class="feat-icon">&#128506;</div>
+        <div>
+          <div class="feat-title">Interactive Restaurant Map</div>
+          <div class="feat-desc">Customers see partner restaurants on a map when they visit the homepage.</div>
+          <div class="feat-why">&#10003; Map tiles are public &mdash; it's the same info you see on maps.google.com. The key just tells Google "bill this to FreshBite." No private data.</div>
+        </div>
+      </div>
+
+      <div class="feature-card" onclick="toggleFeature(this)">
+        <div class="feat-icon">&#128269;</div>
+        <div>
+          <div class="feat-title">Address Autocomplete</div>
+          <div class="feat-desc">When you type your delivery address, suggestions appear as you type.</div>
+          <div class="feat-why">&#10003; Street addresses are public information. Google's Places service returns the same data to every app. Nothing private here.</div>
+        </div>
+      </div>
+
+      <div class="feature-card" onclick="toggleFeature(this)">
+        <div class="feat-icon">&#128666;</div>
+        <div>
+          <div class="feat-title">Delivery Route & ETA</div>
+          <div class="feat-desc">Shows the driving route from restaurant to your door and estimated time.</div>
+          <div class="feat-why">&#10003; Driving directions are public. It's the same route Google Maps would give anyone. The key just tracks how many times FreshBite asked for directions.</div>
+        </div>
+      </div>
+
+      <div class="feature-card" onclick="toggleFeature(this)">
+        <div class="feat-icon">&#128176;</div>
+        <div>
+          <div class="feat-title">Delivery Fee Calculator</div>
+          <div class="feat-desc">Calculates delivery cost based on distance: $2.99 base + $0.50/km.</div>
+          <div class="feat-why">&#10003; Distance between two points is public data. The fee calculation happens in FreshBite's code &mdash; Google just provides the distance number.</div>
+        </div>
+      </div>
+
+      <div class="feature-card" onclick="toggleFeature(this)">
+        <div class="feat-icon">&#127909;</div>
+        <div>
+          <div class="feat-title">Chef Recipe Videos</div>
+          <div class="feat-desc">Embeds public YouTube recipe videos from partner chefs on each meal's page.</div>
+          <div class="feat-why">&#10003; These are public YouTube videos &mdash; anyone can watch them. The key just lets FreshBite search YouTube's public catalog programmatically.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-row" style="margin-top:2rem">
+      <div class="flow-box glow-blue">
+        <div class="f-icon">&#127858;</div>
+        <div class="f-label">FreshBite.com</div>
+        <div class="f-sub">API key in website code</div>
+        <div class="f-sub" style="color:var(--warning);font-family:monospace;font-size:0.65rem;margin-top:4px">AIzaSyDkR40...</div>
+      </div>
+      <div class="flow-arrow green">&#8594;</div>
+      <div class="flow-box glow-green">
+        <div class="f-icon">&#9729;&#65039;</div>
+        <div class="f-label">Google</div>
+        <div class="f-sub">"Oh, that's FreshBite.<br>Here's the map data."</div>
+      </div>
+    </div>
+
+    <p class="narrative" style="text-align:center;font-size:0.95rem;color:var(--text-dim)">Everyone can see this key. Google says that's fine. It's just a <strong>name tag</strong>, not a password. It's been this way since 2021. <strong>Nothing to worry about...</strong></p>
+  </div>
+</section>
+
+
+<!-- ==================== STEP 5: THE TWO TYPES ==================== -->
+<section class="step-section" id="step-5">
+  <div class="step-content">
+    <div class="chapter-label"><span class="num">5</span> The Full Picture</div>
+    <h2>Two Types of Access. Clear Rules.</h2>
+
+    <p class="narrative">For over a decade, Google maintained a clean, simple system that everyone understood:</p>
+
+    <div class="analogy-grid" style="margin:2rem 0">
+      <div class="analogy-box green" style="border-top-width:4px">
+        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem">
+          <span style="font-size:1.3rem">&#128100;</span>
+          <h3 style="margin:0">Just the Name Tag</h3>
+        </div>
+        <div style="font-size:0.95rem;font-weight:700;color:var(--success);margin-bottom:0.75rem;">API Key (Identifier Only)</div>
+        <p style="margin-bottom:0.75rem">"I'm FreshBite's app."</p>
+        <div style="font-size:0.85rem;color:var(--text-dim);line-height:1.7">
+          &#10003; Show me the map<br>
+          &#10003; Search public videos<br>
+          &#10003; Give me directions<br>
+          &#10003; Translate this text<br><br>
+          <strong style="color:var(--text)">No password needed.</strong><br>
+          This is all public information anyway.
+        </div>
+      </div>
+
+      <div class="analogy-box red" style="border-top-width:4px">
+        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem">
+          <span style="font-size:1.3rem">&#128274;</span>
+          <h3 style="margin:0">Full Login</h3>
+        </div>
+        <div style="font-size:0.95rem;font-weight:700;color:var(--danger);margin-bottom:0.75rem;">Client ID + Secret (Username + Password)</div>
+        <p style="margin-bottom:0.75rem">"I'm FreshBite's app &mdash; and here's my proof."</p>
+        <div style="font-size:0.85rem;color:var(--text-dim);line-height:1.7">
+          &#128274; Read a user's private emails<br>
+          &#128274; Access their Google Drive files<br>
+          &#128274; See their private playlists<br>
+          &#128274; Manage their calendar<br><br>
+          <strong style="color:var(--text)">Password required.</strong><br>
+          This is someone's private life.
+        </div>
+      </div>
+    </div>
+
+    <p class="narrative">Simple, right? Public stuff gets a name tag. Private stuff gets a full login. <strong>Everyone followed these rules for years.</strong> Millions of websites embedded their API keys in public code, exactly as Google instructed.</p>
+
+    <div class="quote-block">
+      "API keys for Firebase services only <em>identify</em> your project. You do not need to treat API keys as secrets, and you can safely embed them in client code."
+      <cite>&mdash; Google's Firebase Documentation</cite>
+    </div>
+
+    <p class="narrative"><strong>Remember this. It's about to matter a lot.</strong></p>
+  </div>
+</section>
+
+
+<!-- ==================== STEP 6: GEMINI ==================== -->
+<section class="step-section" id="step-6">
+  <div class="step-content">
+    <div class="chapter-label"><span class="num">6</span> The Twist</div>
+    <h2>Then Google Launched Gemini</h2>
+
+    <p class="narrative">Google built Gemini &mdash; a powerful AI that can write, analyze, and generate content. They needed a way for apps to connect to it. And they chose to use... <strong>the same name tag system.</strong></p>
+    <p class="narrative">Same key format. Same setup process. Same <code>AIza...</code> code. But here's the problem:</p>
+
+    <div class="analogy-grid">
+      <div class="analogy-box green">
+        <div class="icon-row">&#128506;</div>
+        <h3>Google Maps (the old way)</h3>
+        <p>You ask: "Show me a map of LA."</p>
+        <p style="margin-top:0.5rem">Google shows you the map. <strong>It was already public.</strong> Anyone could see it. It costs Google almost nothing to serve.</p>
+        <div style="margin-top:0.75rem;font-size:0.85rem;color:var(--success);font-weight:600">Name tag is fine here.</div>
+      </div>
+
+      <div class="analogy-box red">
+        <div class="icon-row">&#129302;</div>
+        <h3>Google Gemini (the new thing)</h3>
+        <p>You ask: "Write me a 5,000-word analysis."</p>
+        <p style="margin-top:0.5rem">Google fires up expensive AI computers to generate a custom response. <strong>There's no "public" version of this.</strong> Every request costs real money.</p>
+        <div style="margin-top:0.75rem;font-size:0.85rem;color:var(--danger);font-weight:600">A name tag is NOT enough here.</div>
+      </div>
+    </div>
+
+    <p class="narrative">See the problem? A map is like a book on a library shelf &mdash; it's already there, anyone can look at it. But Gemini is like <strong>hiring a personal tutor</strong>. Every question you ask costs money. You wouldn't let just anyone walk up and start using your tutor account.</p>
+
+    <div class="callout red">
+      <strong style="color:var(--danger)">The contradiction:</strong> Google's own documentation now says two opposite things at the same time:<br><br>
+      <strong>Firebase docs:</strong> "You do not need to treat API keys as secrets."<br>
+      <strong>Gemini docs:</strong> "Treat your Gemini API key like a password."<br><br>
+      <span style="color:var(--text-dim)">Both updated January 2026. Both use the exact same key format. Same platform.</span>
+    </div>
+
+    <p class="narrative">Google used the <strong>name tag system</strong> for something that needed a <strong>full password</strong>. That was the mistake. But it gets worse.</p>
+  </div>
+</section>
+
+
+<!-- ==================== STEP 7: THE SILENT UPGRADE ==================== -->
+<section class="step-section" id="step-7">
+  <div class="step-content">
+    <div class="chapter-label"><span class="num">7</span> The Real Danger</div>
+    <h2>The Silent Upgrade Nobody Asked For</h2>
+
+    <p class="narrative">Here's what made this truly dangerous. Remember FreshBite's API key from 2021 &mdash; the one sitting in their public website code, visible to anyone?</p>
+    <p class="narrative">When someone on FreshBite's team turned on Gemini for their Google account, something happened <strong>silently, in the background</strong>:</p>
+
+    <div class="before-after">
+      <div class="ba-card">
+        <div class="ba-label">Before: FreshBite's API key could access...</div>
+        <div class="chip-list">
+          <span class="chip safe">Maps</span>
+          <span class="chip safe">Directions</span>
+          <span class="chip safe">Places</span>
+          <span class="chip safe">Distance</span>
+          <span class="chip safe">YouTube search</span>
+        </div>
+        <div style="font-size:0.8rem;color:var(--text-dim);margin-top:0.75rem">All public data. Key is publicly visible. Everything is fine.</div>
+      </div>
+      <div class="ba-divider">
+        &#9660; Someone on the team enables Gemini &mdash; <strong>no warning, no confirmation, no email</strong> &#9660;
+      </div>
+      <div class="ba-card">
+        <div class="ba-label">After: Same key can now ALSO access...</div>
+        <div class="chip-list">
+          <span class="chip safe">Maps</span>
+          <span class="chip safe">Directions</span>
+          <span class="chip safe">Places</span>
+          <span class="chip safe">Distance</span>
+          <span class="chip safe">YouTube search</span>
+          <span class="chip danger">Gemini AI</span>
+        </div>
+        <div style="font-size:0.8rem;color:var(--danger);margin-top:0.75rem;font-weight:600">That public name tag now unlocks an expensive AI. And it's still sitting in the website code for anyone to copy.</div>
+      </div>
+    </div>
+
+    <p class="narrative">Let's go back to our analogy. Imagine you have a library card &mdash; it lets you browse public books. One day, the library <em>silently</em> upgrades your card so it also works as a <strong>credit card</strong>. No notification. No email. No confirmation dialog. And your library card number is printed on your public blog.</p>
+
+    <p class="narrative"><strong>That's exactly what happened.</strong></p>
+
+    <p class="narrative">Anyone who visits FreshBite's website can see the API key in the code. Before Gemini, that was harmless &mdash; like seeing a library card number. After the silent upgrade, that same visible string lets a stranger:</p>
+
+    <div class="visual-card" style="border-color:rgba(239,68,68,0.3)">
+      <div style="display:flex;flex-direction:column;gap:0.75rem;">
+        <div style="display:flex;align-items:center;gap:0.75rem">
+          <span style="color:var(--danger);font-size:1.2rem">&#9888;</span>
+          <span style="color:var(--text-dim)"><strong style="color:var(--text-bright)">Run up your AI bill</strong> &mdash; every Gemini request costs money, and it's charged to FreshBite</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.75rem">
+          <span style="color:var(--danger);font-size:1.2rem">&#9888;</span>
+          <span style="color:var(--text-dim)"><strong style="color:var(--text-bright)">Access uploaded files</strong> &mdash; any documents FreshBite uploaded to Gemini for analysis</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.75rem">
+          <span style="color:var(--danger);font-size:1.2rem">&#9888;</span>
+          <span style="color:var(--text-dim)"><strong style="color:var(--text-bright)">Shut down services</strong> &mdash; exhaust FreshBite's quota so their real features stop working</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="narrative">And the old protection &mdash; restricting who can use the key by checking which website the request came from? <strong>It doesn't work with Gemini.</strong> Those checks only work for browser-based requests. Gemini calls can be made from anywhere.</p>
+
+    <div class="callout red">
+      <strong style="color:var(--danger)">The name tag became a credit card.</strong> It was still pinned to the front desk for everyone to see. And the front-desk lock didn't work anymore.
+    </div>
+  </div>
+</section>
+
+
+<!-- ==================== STEP 8: WHAT HAPPENED ==================== -->
+<section class="step-section" id="step-8">
+  <div class="step-content">
+    <div class="chapter-label"><span class="num">8</span> The Fallout</div>
+    <h2>This Wasn't Theoretical</h2>
+
+    <p class="narrative">Security researchers at Truffle Security discovered this problem and scanned the internet to see how widespread it was. The numbers were staggering.</p>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-num red">2,863</div>
+        <div class="stat-label">Websites with publicly visible API keys that now had Gemini access</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num yellow">35,000+</div>
+        <div class="stat-label">API keys found in phone apps &mdash; across 250,000 Android applications</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num blue">3+ years</div>
+        <div class="stat-label">Some keys had been publicly visible since 2023, before Gemini even existed</div>
+      </div>
+    </div>
+
+    <p class="narrative">Among the affected: major banks, security companies, global recruiting firms &mdash; and even <strong>Google itself</strong> had exposed keys on its own products.</p>
+
+    <div class="incident-card">
+      <h3>The $82,314 Bill</h3>
+      <p style="color:var(--text-dim);font-size:1rem;">A small startup in Mexico &mdash; just three developers, normally spending <strong>$180 per month</strong> on Google services &mdash; had their API key found by attackers.</p>
+      <div class="money">$82,314.44</div>
+      <p style="color:var(--text-dim);font-size:0.95rem;">Charged in <strong>48 hours</strong>. That's a <strong>46,000% increase</strong> over their normal monthly bill. The attackers simply used the publicly visible API key to make thousands of Gemini requests.</p>
+
+      <div class="quote-block" style="border-color:var(--danger);background:rgba(239,68,68,0.05);margin-top:1.25rem">
+        "If Google attempts to enforce even a third of this amount, our company goes bankrupt."
+        <cite>&mdash; The developer, after Google initially declined to waive the charges</cite>
+      </div>
+    </div>
+
+    <p class="narrative">When the developer asked Google for help, Google cited "shared responsibility" &mdash; saying <em>they</em> should have protected their key. But this was a key Google's own documentation said <strong>didn't need to be protected.</strong></p>
+
+    <div class="timeline" id="timeline">
+      <div class="timeline-item" style="transition-delay:0.1s">
+        <div class="timeline-date">Nov 21, 2025</div>
+        <div class="timeline-text">Truffle Security reports the vulnerability to Google</div>
+      </div>
+      <div class="timeline-item bad" style="transition-delay:0.2s">
+        <div class="timeline-date">Nov 25, 2025</div>
+        <div class="timeline-text">Google dismisses it as "intended behavior"</div>
+      </div>
+      <div class="timeline-item" style="transition-delay:0.3s">
+        <div class="timeline-date">Dec 1, 2025</div>
+        <div class="timeline-text">Researchers show examples from Google's own websites. Google reclassifies as a bug.</div>
+      </div>
+      <div class="timeline-item" style="transition-delay:0.4s">
+        <div class="timeline-date">Jan 13, 2026</div>
+        <div class="timeline-text">Google officially classifies it as a security vulnerability</div>
+      </div>
+      <div class="timeline-item bad" style="transition-delay:0.5s">
+        <div class="timeline-date">Feb 11-12, 2026</div>
+        <div class="timeline-text">A 3-person startup gets an $82,314 Gemini bill in 48 hours</div>
+      </div>
+      <div class="timeline-item bad" style="transition-delay:0.6s">
+        <div class="timeline-date">Feb 25, 2026</div>
+        <div class="timeline-text">Public disclosure. Major tech media covers the story worldwide.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==================== STEP 9: THE LESSON ==================== -->
+<section class="step-section" id="step-9">
+  <div class="step-content">
+    <div class="chapter-label"><span class="num">9</span> What It Means</div>
+    <h2>The Name Tag That Became a Credit Card</h2>
+
+    <p class="narrative">Let's bring it all the way back.</p>
+
+    <div class="visual-card" style="border:none;background:transparent;padding:0">
+      <div class="flow-row">
+        <div class="flow-box glow-green" style="min-width:180px">
+          <div class="f-icon">&#128100;</div>
+          <div class="f-label">Username</div>
+          <div class="f-sub">Identifies you</div>
+          <div class="f-sub" style="color:var(--success);margin-top:4px;font-weight:600">Not secret</div>
+        </div>
+        <div style="text-align:center;color:var(--text-dim);font-size:0.8rem">is to</div>
+        <div class="flow-box glow-green" style="min-width:180px">
+          <div class="f-icon">&#128273;</div>
+          <div class="f-label">API Key</div>
+          <div class="f-sub">Identifies the app</div>
+          <div class="f-sub" style="color:var(--success);margin-top:4px;font-weight:600">Not secret</div>
+        </div>
+      </div>
+
+      <div class="flow-row" style="margin-top:1.5rem">
+        <div class="flow-box glow-red" style="min-width:180px;border-color:var(--danger)">
+          <div class="f-icon">&#128274;</div>
+          <div class="f-label">Password</div>
+          <div class="f-sub">Proves it's you</div>
+          <div class="f-sub" style="color:var(--danger);margin-top:4px;font-weight:600">Keep secret!</div>
+        </div>
+        <div style="text-align:center;color:var(--text-dim);font-size:0.8rem">is to</div>
+        <div class="flow-box glow-red" style="min-width:180px;border-color:var(--danger)">
+          <div class="f-icon">&#128272;</div>
+          <div class="f-label">Client Secret</div>
+          <div class="f-sub">Proves it's the real app</div>
+          <div class="f-sub" style="color:var(--danger);margin-top:4px;font-weight:600">Keep secret!</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="narrative" style="margin-top:2rem">For a decade, the system was clean. Usernames (API keys) were public. Passwords (client secrets) were private. Millions of developers followed the rules.</p>
+    <p class="narrative">Then Google used the <strong>username system</strong> for something that needed a <strong>password</strong>. And worse &mdash; they silently upgraded everyone's existing usernames to also work as passwords, without telling anyone.</p>
+    <p class="narrative">The developers who got hurt weren't careless. They did exactly what Google told them to do. <strong>The platform changed the rules underneath them.</strong></p>
+
+    <div class="visual-card" style="border-left:3px solid var(--warning)">
+      <h3 style="color:var(--text-bright);font-size:1.05rem;margin-bottom:1rem">The takeaway, in plain language:</h3>
+      <p style="color:var(--text-dim);font-size:1rem;line-height:1.8;margin-bottom:0">
+        When you log into Gmail, you know your password is secret. When an app connects to Google, it used to be clear which part was the "password" and which was just the "username." Gemini blurred that line &mdash; it used the username format for something that should have required a password. And because thousands of those "usernames" were already posted publicly (as intended), suddenly the whole world had the keys to a very expensive machine.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<!-- Footer -->
+<footer class="footer">
+  <p>Based on research by <a href="https://trufflesecurity.com/blog/google-api-keys-werent-secrets-but-then-gemini-changed-the-rules" target="_blank" rel="noopener">Truffle Security</a> (February 2026)</p>
+  <p style="margin-top:0.5rem">An interactive explanation for everyone &mdash; no technical background required.</p>
+</footer>
+
+
+<script>
+// Feature card expand/collapse
+function toggleFeature(el) {
+  const wasExpanded = el.classList.contains('expanded');
+  el.closest('.visual-card').querySelectorAll('.feature-card').forEach(c => c.classList.remove('expanded'));
+  if (!wasExpanded) el.classList.add('expanded');
+}
+
+// Scroll animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      entry.target.querySelectorAll('.timeline-item').forEach((item, i) => {
+        setTimeout(() => item.classList.add('visible'), i * 150);
+      });
+      const stepId = entry.target.id;
+      if (stepId && stepId.startsWith('step-')) {
+        const stepNum = stepId.split('-')[1];
+        document.querySelectorAll('.step-nav button').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.step === stepNum);
+        });
+      }
+    }
+  });
+}, { threshold: 0.2 });
+
+document.querySelectorAll('.step-section').forEach(s => observer.observe(s));
+
+// Nav clicks
+document.querySelectorAll('.step-nav button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = document.getElementById('step-' + btn.dataset.step);
+    if (target) target.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
+// Progress bar
+window.addEventListener('scroll', () => {
+  const pct = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+</script>
+
+</body>
+</html>
