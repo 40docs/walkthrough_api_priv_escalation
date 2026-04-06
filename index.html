@@ -1023,8 +1023,8 @@
     <p class="narrative">But not every app needs access to private things. And for those that don't, Google offered a simpler option: <strong>just the identifier, no secret.</strong> They called it an <em>API key</em>.</p>
 
     <div class="quote-block">
-      "API keys for Firebase services only <em>identify</em> your project. You do not need to treat API keys as secrets, and you can safely embed them in client code."
-      <cite>&mdash; Google's Firebase Documentation</cite>
+      "Usually, you need to fastidiously guard API keys; however, API keys for Firebase services are <em>ok to include in code</em> or in checked-in config files."
+      <cite>&mdash; <a href="https://firebase.google.com/docs/projects/api-keys" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">firebase.google.com/docs/projects/api-keys</a></cite>
     </div>
   </div>
 </section>
@@ -1184,9 +1184,13 @@
 
     <div class="callout red">
       <strong style="color:var(--danger)">The disconnect:</strong> Two parts of Google's documentation now say opposite things:<br><br>
-      <strong>Firebase docs:</strong> "You do not need to treat API keys as secrets."<br>
-      <strong>Gemini docs:</strong> "Treat your Gemini API key like a password."<br><br>
-      <span style="color:var(--text-dim)">Both updated January 2026. Both use the exact same key format. Same platform. Likely written by different teams who didn't coordinate.</span>
+      <span style="color:var(--text-dim);font-size:0.85rem;display:block;margin-bottom:0.5rem">Firebase Security Checklist:</span>
+      <strong>"API keys for Firebase are not secret."</strong><br>
+      <span style="font-size:0.7rem;color:var(--text-dim)"><a href="https://firebase.google.com/support/guides/security-checklist" target="_blank" rel="noopener" style="color:var(--text-dim);">firebase.google.com/support/guides/security-checklist</a></span><br><br>
+      <span style="color:var(--text-dim);font-size:0.85rem;display:block;margin-bottom:0.5rem">Gemini API Key docs:</span>
+      <strong>"Treat your Gemini API key like a password."</strong><br>
+      <span style="font-size:0.7rem;color:var(--text-dim)"><a href="https://ai.google.dev/gemini-api/docs/api-key" target="_blank" rel="noopener" style="color:var(--text-dim);">ai.google.dev/gemini-api/docs/api-key</a></span><br><br>
+      <span style="color:var(--text-dim)">Both use the same <code style="font-size:0.8rem">AIza...</code> key format. Same platform. Likely written by different teams.</span>
     </div>
   </div>
 </section>
