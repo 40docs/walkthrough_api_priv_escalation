@@ -666,6 +666,255 @@
   .callout.red { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); }
   .callout.blue { background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.2); }
 
+  /* ===== Interactive Map ===== */
+  .map-wrapper {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin: 2rem 0;
+  }
+
+  .map-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 1rem;
+    background: #1a2236;
+    border-bottom: 1px solid var(--card-border);
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .map-toolbar .map-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--text-bright);
+  }
+
+  .map-toolbar .map-key-badge {
+    font-family: 'Courier New', monospace;
+    font-size: 0.65rem;
+    background: rgba(245,158,11,0.15);
+    border: 1px solid rgba(245,158,11,0.3);
+    color: var(--warning);
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .map-canvas {
+    position: relative;
+    width: 100%;
+    height: 420px;
+    background:
+      radial-gradient(circle at 20% 40%, rgba(59,130,246,0.04) 0%, transparent 50%),
+      radial-gradient(circle at 70% 60%, rgba(34,197,94,0.03) 0%, transparent 50%),
+      #0f1729;
+    cursor: crosshair;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* Grid lines to simulate map */
+  .map-canvas::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(59,130,246,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59,130,246,0.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  /* Street lines */
+  .map-street {
+    position: absolute;
+    background: rgba(148,163,184,0.12);
+    border-radius: 2px;
+  }
+
+  .map-street.h { height: 3px; }
+  .map-street.v { width: 3px; }
+  .map-street.major { background: rgba(148,163,184,0.2); }
+
+  .map-street-label {
+    position: absolute;
+    font-size: 0.55rem;
+    color: rgba(148,163,184,0.35);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  /* Map pins */
+  .map-pin {
+    position: absolute;
+    transform: translate(-50%, -100%);
+    cursor: pointer;
+    transition: transform 0.2s, filter 0.2s;
+    z-index: 10;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+  }
+
+  .map-pin:hover { transform: translate(-50%, -100%) scale(1.15); z-index: 20; }
+  .map-pin.active { transform: translate(-50%, -100%) scale(1.2); z-index: 30; }
+
+  .pin-head {
+    width: 32px;
+    height: 32px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pin-head span {
+    transform: rotate(45deg);
+    font-size: 0.85rem;
+  }
+
+  .pin-head.restaurant { background: var(--google-red); }
+  .pin-head.customer { background: var(--accent); }
+
+  .pin-label {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.85);
+    color: var(--text-bright);
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .map-pin:hover .pin-label,
+  .map-pin.active .pin-label { opacity: 1; }
+
+  /* Delivery route line */
+  .route-line {
+    position: absolute;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  /* Distance badge on the map */
+  .distance-badge {
+    position: absolute;
+    background: rgba(0,0,0,0.9);
+    border: 1px solid var(--accent);
+    color: var(--text-bright);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 6px;
+    z-index: 15;
+    pointer-events: none;
+    white-space: nowrap;
+    box-shadow: 0 0 10px var(--accent-glow);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .distance-badge.show { opacity: 1; }
+
+  /* Info panel overlay */
+  .map-info-panel {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(10,14,26,0.97) 60%, transparent);
+    padding: 2rem 1.5rem 1.25rem;
+    z-index: 25;
+    transition: all 0.4s;
+  }
+
+  .map-info-panel .info-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text-bright);
+    margin-bottom: 0.25rem;
+  }
+
+  .map-info-panel .info-detail {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  .map-info-panel .info-detail strong { color: var(--text); }
+
+  .map-info-panel .info-api {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 0.5rem;
+    padding: 3px 8px;
+    background: rgba(34,197,94,0.12);
+    border: 1px solid rgba(34,197,94,0.25);
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--success);
+  }
+
+  .delivery-stats {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .delivery-stat {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8rem;
+  }
+
+  .delivery-stat .ds-value {
+    font-weight: 700;
+    color: var(--text-bright);
+  }
+
+  .delivery-stat .ds-label {
+    color: var(--text-dim);
+  }
+
+  /* Pulsing dot on customer pin */
+  @keyframes ping {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(2.5); opacity: 0; }
+  }
+
+  .pulse-ring {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(59,130,246,0.3);
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%) rotate(45deg);
+    transform-origin: center center;
+    animation: ping 2s cubic-bezier(0,0,0.2,1) infinite;
+    pointer-events: none;
+  }
+
   /* Footer */
   .footer {
     text-align: center;
@@ -854,81 +1103,116 @@
     <div class="chapter-label"><span class="num">4</span> A Real Example</div>
     <h2>Meet FreshBite &mdash; A Meal Delivery Service</h2>
 
-    <p class="narrative">Let's see this in action. FreshBite is a small meal delivery startup. Their website uses Google's public services for five features &mdash; and <strong>every one requires the API key to be visible in the website's code.</strong></p>
+    <p class="narrative">Let's see this in action. FreshBite is a small meal delivery startup in Los Angeles. Below is their actual website &mdash; <strong>click on any restaurant pin</strong> to see the delivery route, distance, ETA, and fee calculated in real time.</p>
+    <p class="narrative">All of this runs on <strong>one API key, visible in the website code</strong>. Look for the yellow badge at the top.</p>
 
-    <div style="display:flex;align-items:center;gap:1rem;margin:1.5rem 0;padding:1.2rem;background:var(--card);border:1px solid var(--card-border);border-radius:12px;">
-      <div style="font-size:2.5rem">&#127858;</div>
-      <div>
-        <div style="font-weight:700;color:var(--text-bright);font-size:1.1rem;">FreshBite Meals</div>
-        <div style="font-size:0.8rem;color:var(--text-dim);">Local meal delivery in Los Angeles. API key created March 2021.</div>
+    <!-- ===== INTERACTIVE MAP ===== -->
+    <div class="map-wrapper">
+      <div class="map-toolbar">
+        <div class="map-brand">
+          <span>&#127858;</span> FreshBite Meals &mdash; Los Angeles
+        </div>
+        <div class="map-key-badge" title="This key is in the website's public HTML source code">
+          <span>&#128273;</span> API Key: AIzaSyDkR40GHIE7...
+          <span style="color:var(--success);font-size:0.6rem;margin-left:2px;">&#9679; LIVE</span>
+        </div>
+      </div>
+
+      <div class="map-canvas" id="mapCanvas">
+        <!-- Simulated streets -->
+        <div class="map-street h major" style="top:28%;left:0;width:100%"></div>
+        <div class="map-street h" style="top:45%;left:5%;width:90%"></div>
+        <div class="map-street h major" style="top:62%;left:0;width:100%"></div>
+        <div class="map-street h" style="top:78%;left:10%;width:80%"></div>
+        <div class="map-street v major" style="left:22%;top:0;height:100%"></div>
+        <div class="map-street v" style="left:42%;top:10%;height:80%"></div>
+        <div class="map-street v major" style="left:62%;top:0;height:100%"></div>
+        <div class="map-street v" style="left:80%;top:5%;height:90%"></div>
+
+        <div class="map-street-label" style="top:26%;left:3%">Sunset Blvd</div>
+        <div class="map-street-label" style="top:60%;left:3%">W Olympic Blvd</div>
+        <div class="map-street-label" style="top:10%;left:23%;transform:rotate(90deg);transform-origin:left">N La Brea Ave</div>
+        <div class="map-street-label" style="top:10%;left:63%;transform:rotate(90deg);transform-origin:left">N Vermont Ave</div>
+
+        <!-- Restaurant Pins (will be interactive) -->
+        <div class="map-pin" id="pin-sakura" style="left:18%;top:35%" onclick="selectRestaurant('sakura')">
+          <div class="pin-head restaurant"><span>&#127843;</span></div>
+          <div class="pin-label">Sakura Sushi</div>
+        </div>
+
+        <div class="map-pin" id="pin-verde" style="left:38%;top:25%" onclick="selectRestaurant('verde')">
+          <div class="pin-head restaurant"><span>&#129388;</span></div>
+          <div class="pin-label">Casa Verde</div>
+        </div>
+
+        <div class="map-pin" id="pin-flame" style="left:55%;top:50%" onclick="selectRestaurant('flame')">
+          <div class="pin-head restaurant"><span>&#127828;</span></div>
+          <div class="pin-label">Flame Burger</div>
+        </div>
+
+        <div class="map-pin" id="pin-lotus" style="left:75%;top:32%" onclick="selectRestaurant('lotus')">
+          <div class="pin-head restaurant"><span>&#127834;</span></div>
+          <div class="pin-label">Golden Lotus</div>
+        </div>
+
+        <div class="map-pin" id="pin-garden" style="left:48%;top:72%" onclick="selectRestaurant('garden')">
+          <div class="pin-head restaurant"><span>&#129367;</span></div>
+          <div class="pin-label">The Garden Bowl</div>
+        </div>
+
+        <!-- Customer Pin -->
+        <div class="map-pin active" id="pin-customer" style="left:65%;top:68%">
+          <div class="pulse-ring"></div>
+          <div class="pin-head customer"><span>&#128205;</span></div>
+          <div class="pin-label" style="opacity:1;background:rgba(59,130,246,0.9);">You</div>
+        </div>
+
+        <!-- SVG overlay for route lines -->
+        <svg id="routeSvg" class="route-line" style="position:absolute;inset:0;width:100%;height:100%;" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="2" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <!-- Route path drawn dynamically -->
+          <polyline id="routePath" fill="none" stroke="#3b82f6" stroke-width="3" stroke-dasharray="8,6" stroke-linecap="round" filter="url(#glow)" opacity="0"/>
+        </svg>
+
+        <!-- Distance badge -->
+        <div class="distance-badge" id="distBadge"></div>
+
+        <!-- Info panel -->
+        <div class="map-info-panel" id="mapInfoPanel">
+          <div class="info-title" id="infoTitle">&#128205; Click a restaurant pin to order</div>
+          <div class="info-detail" id="infoDetail">FreshBite shows nearby restaurants on an interactive map. Tap any pin to see delivery distance, time, and fee &mdash; all powered by one public API key.</div>
+          <div id="infoStats" class="delivery-stats" style="display:none;">
+            <div class="delivery-stat">
+              <span class="ds-value" id="statDist">&mdash;</span>
+              <span class="ds-label">km</span>
+            </div>
+            <div class="delivery-stat">
+              <span class="ds-value" id="statTime">&mdash;</span>
+              <span class="ds-label">min</span>
+            </div>
+            <div class="delivery-stat">
+              <span class="ds-value" id="statFee">&mdash;</span>
+              <span class="ds-label">delivery</span>
+            </div>
+          </div>
+          <div id="infoApis" style="display:none;margin-top:0.6rem;display:flex;flex-wrap:wrap;gap:0.35rem;">
+          </div>
+        </div>
       </div>
     </div>
 
-    <p class="narrative" style="font-size:0.95rem;margin-bottom:0.5rem;">Click any feature to see why it's safe with just an identifier:</p>
-
-    <div class="visual-card" style="padding:1.25rem">
-      <div class="feature-card" onclick="toggleFeature(this)">
-        <div class="feat-icon">&#128506;</div>
-        <div>
-          <div class="feat-title">Interactive Restaurant Map</div>
-          <div class="feat-desc">Customers see partner restaurants on a map when they visit the homepage.</div>
-          <div class="feat-why">&#10003; Map tiles are public &mdash; it's the same info you see on maps.google.com. The key just tells Google "bill this to FreshBite." No private data.</div>
-        </div>
-      </div>
-
-      <div class="feature-card" onclick="toggleFeature(this)">
-        <div class="feat-icon">&#128269;</div>
-        <div>
-          <div class="feat-title">Address Autocomplete</div>
-          <div class="feat-desc">When you type your delivery address, suggestions appear as you type.</div>
-          <div class="feat-why">&#10003; Street addresses are public information. Google's Places service returns the same data to every app. Nothing private here.</div>
-        </div>
-      </div>
-
-      <div class="feature-card" onclick="toggleFeature(this)">
-        <div class="feat-icon">&#128666;</div>
-        <div>
-          <div class="feat-title">Delivery Route & ETA</div>
-          <div class="feat-desc">Shows the driving route from restaurant to your door and estimated time.</div>
-          <div class="feat-why">&#10003; Driving directions are public. It's the same route Google Maps would give anyone. The key just tracks how many times FreshBite asked for directions.</div>
-        </div>
-      </div>
-
-      <div class="feature-card" onclick="toggleFeature(this)">
-        <div class="feat-icon">&#128176;</div>
-        <div>
-          <div class="feat-title">Delivery Fee Calculator</div>
-          <div class="feat-desc">Calculates delivery cost based on distance: $2.99 base + $0.50/km.</div>
-          <div class="feat-why">&#10003; Distance between two points is public data. The fee calculation happens in FreshBite's code &mdash; Google just provides the distance number.</div>
-        </div>
-      </div>
-
-      <div class="feature-card" onclick="toggleFeature(this)">
-        <div class="feat-icon">&#127909;</div>
-        <div>
-          <div class="feat-title">Chef Recipe Videos</div>
-          <div class="feat-desc">Embeds public YouTube recipe videos from partner chefs on each meal's page.</div>
-          <div class="feat-why">&#10003; These are public YouTube videos &mdash; anyone can watch them. The key just lets FreshBite search YouTube's public catalog programmatically.</div>
-        </div>
-      </div>
+    <!-- Explanation below the map -->
+    <div class="callout green" style="margin-top:0.5rem">
+      <strong style="color:var(--success)">Everything you just interacted with is public data.</strong> Map tiles, restaurant locations, street distances, driving directions &mdash; anyone with a browser can see all of it on Google Maps for free. FreshBite's API key doesn't unlock anything private. It just tells Google: <em>"bill these map lookups to FreshBite's account."</em>
     </div>
 
-    <div class="flow-row" style="margin-top:2rem">
-      <div class="flow-box glow-blue">
-        <div class="f-icon">&#127858;</div>
-        <div class="f-label">FreshBite.com</div>
-        <div class="f-sub">API key in website code</div>
-        <div class="f-sub" style="color:var(--warning);font-family:monospace;font-size:0.65rem;margin-top:4px">AIzaSyDkR40...</div>
-      </div>
-      <div class="flow-arrow green">&#8594;</div>
-      <div class="flow-box glow-green">
-        <div class="f-icon">&#9729;&#65039;</div>
-        <div class="f-label">Google</div>
-        <div class="f-sub">"Oh, that's FreshBite.<br>Here's the map data."</div>
-      </div>
-    </div>
-
-    <p class="narrative" style="text-align:center;font-size:0.95rem;color:var(--text-dim)">Everyone can see this key. Google says that's fine. It's just a <strong>name tag</strong>, not a password. It's been this way since 2021. <strong>Nothing to worry about...</strong></p>
+    <p class="narrative" style="margin-top:0.5rem">That API key &mdash; the one shown in the yellow badge &mdash; is sitting right there in FreshBite's website code. Every visitor can see it. <strong>Google says that's fine.</strong> It's been this way since 2021. It's just a name tag.</p>
+    <p class="narrative"><strong>Nothing to worry about... right?</strong></p>
   </div>
 </section>
 
@@ -1233,14 +1517,151 @@
 
 
 <script>
-// Feature card expand/collapse
-function toggleFeature(el) {
-  const wasExpanded = el.classList.contains('expanded');
-  el.closest('.visual-card').querySelectorAll('.feature-card').forEach(c => c.classList.remove('expanded'));
-  if (!wasExpanded) el.classList.add('expanded');
+// ========== INTERACTIVE MAP ==========
+const restaurants = {
+  sakura: {
+    name: 'Sakura Sushi',
+    cuisine: 'Japanese',
+    pin: 'pin-sakura',
+    x: 18, y: 35,
+    rating: '4.7',
+    emoji: '&#127843;'
+  },
+  verde: {
+    name: 'Casa Verde',
+    cuisine: 'Mexican',
+    pin: 'pin-verde',
+    x: 38, y: 25,
+    rating: '4.5',
+    emoji: '&#129388;'
+  },
+  flame: {
+    name: 'Flame Burger',
+    cuisine: 'American',
+    pin: 'pin-flame',
+    x: 55, y: 50,
+    rating: '4.3',
+    emoji: '&#127828;'
+  },
+  lotus: {
+    name: 'Golden Lotus',
+    cuisine: 'Thai',
+    pin: 'pin-lotus',
+    x: 75, y: 32,
+    rating: '4.8',
+    emoji: '&#127834;'
+  },
+  garden: {
+    name: 'The Garden Bowl',
+    cuisine: 'Healthy',
+    pin: 'pin-garden',
+    x: 48, y: 72,
+    rating: '4.6',
+    emoji: '&#129367;'
+  }
+};
+
+const customerPos = { x: 65, y: 68 };
+
+// Simulate realistic-ish km distances from each restaurant to customer
+const distancesKm = {
+  sakura: 6.2,
+  verde: 5.8,
+  flame: 2.4,
+  lotus: 4.1,
+  garden: 1.7
+};
+
+let activeRestaurant = null;
+
+function selectRestaurant(id) {
+  const r = restaurants[id];
+  const dist = distancesKm[id];
+  const timeMin = Math.round(dist * 3.2 + 5); // rough ETA
+  const fee = (2.99 + dist * 0.50).toFixed(2);
+
+  // Deactivate old pin
+  document.querySelectorAll('.map-pin').forEach(p => {
+    if (p.id !== 'pin-customer') p.classList.remove('active');
+  });
+
+  // Activate new pin
+  document.getElementById(r.pin).classList.add('active');
+  activeRestaurant = id;
+
+  // Draw route line (SVG polyline with a few waypoints for realism)
+  const canvas = document.getElementById('mapCanvas');
+  const W = canvas.offsetWidth;
+  const H = canvas.offsetHeight;
+
+  const rx = r.x / 100 * W;
+  const ry = r.y / 100 * H;
+  const cx = customerPos.x / 100 * W;
+  const cy = customerPos.y / 100 * H;
+
+  // Create a 2-3 point "street" route instead of straight line
+  const midX1 = rx + (cx - rx) * 0.3;
+  const midY1 = ry;
+  const midX2 = cx;
+  const midY2 = ry + (cy - ry) * 0.6;
+
+  const path = document.getElementById('routePath');
+  path.setAttribute('points', `${rx},${ry} ${midX1},${midY1} ${midX2},${midY2} ${cx},${cy}`);
+  path.setAttribute('opacity', '1');
+
+  // Animate dash offset
+  const len = path.getTotalLength ? path.getTotalLength() : 500;
+  path.style.strokeDasharray = `${len}`;
+  path.style.strokeDashoffset = `${len}`;
+  path.style.transition = 'none';
+  // force reflow
+  path.getBoundingClientRect();
+  path.style.transition = 'stroke-dashoffset 0.8s ease-out';
+  path.style.strokeDashoffset = '0';
+
+  // After animation, switch to dashed
+  setTimeout(() => {
+    path.style.transition = 'none';
+    path.style.strokeDasharray = '8,6';
+    path.style.strokeDashoffset = '0';
+  }, 850);
+
+  // Distance badge at midpoint of route
+  const badge = document.getElementById('distBadge');
+  const bx = (rx + cx) / 2;
+  const by = (ry + cy) / 2 - 15;
+  badge.style.left = bx + 'px';
+  badge.style.top = by + 'px';
+  badge.textContent = dist.toFixed(1) + ' km';
+  badge.classList.add('show');
+
+  // Update info panel
+  document.getElementById('infoTitle').innerHTML = `${r.emoji} ${r.name} <span style="font-size:0.75rem;color:var(--text-dim);font-weight:400">${r.cuisine} &bull; ${r.rating}&#9733;</span>`;
+  document.getElementById('infoDetail').innerHTML = `Delivering to <strong>your location</strong> &mdash; route calculated via Google Directions API.`;
+
+  document.getElementById('infoStats').style.display = 'flex';
+  document.getElementById('statDist').textContent = dist.toFixed(1);
+  document.getElementById('statTime').textContent = '~' + timeMin;
+  document.getElementById('statFee').textContent = '$' + fee;
+
+  // Show API badges
+  const apiBox = document.getElementById('infoApis');
+  apiBox.style.display = 'flex';
+  apiBox.innerHTML = `
+    <span class="info-api">&#128506; Maps JavaScript API</span>
+    <span class="info-api">&#128205; Places API</span>
+    <span class="info-api">&#128663; Directions API</span>
+    <span class="info-api">&#128207; Distance Matrix API</span>
+  `;
 }
 
-// Scroll animations
+// Recalculate route line on resize
+window.addEventListener('resize', () => {
+  if (activeRestaurant) selectRestaurant(activeRestaurant);
+});
+
+
+// ========== SCROLL ANIMATIONS ==========
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
