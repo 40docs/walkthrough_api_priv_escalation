@@ -1139,7 +1139,17 @@
     </div>
 
     <div class="callout green" style="margin-top:0.5rem">
-      <strong style="color:var(--success)">Everything you just interacted with is public data.</strong> Map tiles, restaurant locations, street distances, driving directions &mdash; anyone with a browser can see all of it on Google Maps for free. FreshBite's API key doesn't unlock anything private. It just tells Google: <em>"bill these map lookups to FreshBite's account."</em>
+      <strong style="color:var(--success)">Everything you just interacted with is public data.</strong> Map tiles, restaurant locations, street distances, driving directions &mdash; anyone can see all of it on Google Maps for free from their phone. So why does FreshBite need a key at all?
+    </div>
+
+    <div class="visual-card" style="margin-top:0;border-radius:0 0 12px 12px;border-top:none;padding:1.5rem 1.75rem;">
+      <p class="narrative" style="margin-bottom:1rem;max-width:100%">When <strong>you</strong> open Google Maps on your phone, Google doesn't charge you. You're the product &mdash; they show you ads, learn your habits, collect location data. That's the deal.</p>
+      <p class="narrative" style="margin-bottom:1rem;max-width:100%">But when <strong>FreshBite</strong> embeds that same map into their own website, Google doesn't get those benefits. FreshBite's customers see FreshBite's brand, not Google's ads. So Google says:</p>
+      <div class="quote-block" style="margin:0.75rem 0;border-color:var(--success)">
+        "You can use my maps &mdash; but since I'm not making ad revenue from your users, I'm going to charge <em>you</em> per lookup. Give me a key so I know who to bill."
+        <cite>&mdash; The business logic behind API keys</cite>
+      </div>
+      <p class="narrative" style="margin-bottom:0;max-width:100%">That's all the API key does. It's a <strong>billing label</strong>. Not a password. Not a secret. Just: <em>"charge this to FreshBite."</em> The data itself is still public &mdash; the key just tracks who's using it and how much.</p>
     </div>
 
     <p class="narrative" style="margin-top:1.5rem">FreshBite isn't unusual. <strong>Millions of websites</strong> use the same approach &mdash; public API key, right there in the code. Here are a few more everyday examples:</p>
